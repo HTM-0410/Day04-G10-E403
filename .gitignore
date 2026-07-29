@@ -20,6 +20,10 @@ arxiv_papers/
 # Streamlit demo runtime artifacts
 starter_v0/transcripts/ui_*.transcript.json
 
+# Local presentation notes (not part of the submitted source)
+starter_v0/DEMO_SCRIPT.md
+starter_v0/artifacts/versions/README.md
+
 # OS / editor
 .DS_Store
 Thumbs.db
