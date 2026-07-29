@@ -22,113 +22,114 @@
 
 ## A1. Agent này làm được gì
 
-Research agent hỗ trợ tra cứu tin tức web/mạng xã hội (Twitter), kiểm tra/tóm tắt bài viết theo URL, phân loại độ tin cậy nguồn tin (source triage), và gửi thông báo nháp sau khi có xác nhận.
+Research agent hỗ trợ tìm kiếm web và mạng xã hội, đọc URL, trình bày kết quả,
+phân loại độ tin cậy của nguồn và kiểm tra chất lượng bộ evidence trước khi tổng
+hợp. Agent có ranh giới xác nhận rõ ràng đối với hành động bên ngoài.
 
-**Link dùng thử (truy cập được trong showdown):**
-
-> URL: https://day04-g10-e403-bdpjg7wgrh44pydaysszp7.streamlit.app/
+**Link dùng thử:** Streamlit UI chạy bằng `starter_v0/app.py`; public URL được
+điền sau khi hoàn tất đăng nhập Streamlit Community Cloud.
 
 ## A2. Tool agent có
 
 | Tên tool | Làm được gì | Tool mới nhóm thêm? |
 |---|---|---|
-| clarify | Hỏi lại người dùng khi thiếu thông tin bắt buộc hoặc cần xác nhận hành động | không |
-| lookup | Tìm kiếm thông tin tin tức/web theo từ khóa, chủ đề và khung thời gian | không |
-| timeline | Lấy các bài đăng gần đây từ một tài khoản mạng xã hội cụ thể | không |
-| social_search | Tìm kiếm bài viết/tweet theo từ khóa trên mạng xã hội | không |
-| fetch | Đọc và trích xuất nội dung chi tiết từ một đường dẫn URL | không |
-| send | Gửi thông báo/báo cáo sang kênh bên ngoài (Telegram) sau khi có xác nhận | không |
-| source_triage | Phân loại và đánh giá độ tin cậy của các nguồn tin/URL dựa trên uy tín domain | có (Must-have) |
+| `clarify` | Hỏi lại khi thiếu dữ liệu hoặc cần xác nhận hành động | Không |
+| `timeline` | Lấy bài đăng gần đây của một tài khoản X/Twitter | Không |
+| `social_search` | Tìm bài social theo chủ đề | Không |
+| `lookup` | Tìm kiếm web hoặc web news | Không |
+| `fetch` | Đọc nội dung từ URL cụ thể | Không |
+| `format` | Định dạng items đã có thành digest | Không |
+| `source_triage` | Phân loại URL theo Tier 1/2/3 | **Có — tool #1** |
+| `source_deduplicate` | Chuẩn hóa và loại URL trùng/tracking | **Có — tool #2** |
+| `freshness_check` | Kiểm tra nguồn fresh/stale theo ngày và ngưỡng tuổi | **Có — tool #3** |
+| `claim_coverage` | Phát hiện claim chưa có evidence URL | **Có — tool #4** |
 
 ## A3. Câu hỏi mẫu để thử
 
-1. `Phân loại độ tin cậy của hai nguồn này: https://www.who.int/news và https://x.com/example/status/1`
-2. `Tìm web news cho đúng từ khóa cybersecurity trong tuần này.`
-3. `Cho mình tweet mới của Sam Altman, sau đó đổi sang Andrej Karpathy và lấy đúng 2 bài gần nhất.`
-4. `Soạn nháp: Báo cáo AI tuần này đã sẵn sàng và gửi lên Telegram.`
+1. `Phân loại độ tin cậy của https://who.int/news và https://x.com/example/status/1.`
+2. `Chuẩn hóa và loại trùng: https://www.example.com/report?utm_source=demo và https://example.com/report#summary.`
+3. `Kiểm tra độ mới: Report A ngày 2026-07-01, Report B ngày 2024-01-01; mốc 2026-07-29, ngưỡng 90 ngày.`
+4. `Claims C1 và C2; URL run.json chỉ hỗ trợ C1. Kiểm tra claim coverage.`
+5. `Tìm web news về AI hôm nay, không tìm Twitter.`
 
 ## A4. Kịch bản demo đã rehearse
 
-| Scenario | Tool trace cần thấy | Câu chuyện cải thiện version | Fallback run/transcript |
+| Scenario | Tool trace cần thấy | Câu chuyện cải thiện | Fallback run |
 |---|---|---|---|
-| 1. Triage độ tin cậy nguồn tin | `source_triage(urls=[...])` | v0 chưa có tool triage; v3 thêm `source_triage` để phân loại độ uy tín nguồn web & social | `runs/v3_B_group_openrouter_20260729T101333509815.json` |
-| 2. Hỏi lại khi thiếu URL | `clarify(response_type="text")` | v0 đoán đại hoặc gọi tool sai; v1 thêm quy tắc hỏi lại khi thiếu URL | `runs/v1_B_base_openrouter_20260729T095452922876.json` |
-| 3. Đổi tài khoản & số lượng post | `timeline(screenname="karpathy", limit=2)` | v1/v2 bị dính stale handle cũ; v3 ưu tiên intent cập nhật ở turn mới nhất | `runs/v3_B_base_openrouter_20260729T101955589370.json` |
-| 4. Bắt buộc xác nhận trước khi Send | `clarify(response_type="yes_no")` -> `send` | v0 gọi `send` trực tiếp; v1+ chặn không cho gửi nếu chưa có yes/no confirmation | `runs/v2_B_base_openrouter_20260729T100020831257.json` |
+| Source quality | `source_triage` với tất cả URL trong một call | Declaration rõ giúp không tách URL hoặc gọi social nhầm | `runs/v3_B_group_openrouter_20260729T134452170916.json` |
+| Evidence cleanup | `source_deduplicate` → `freshness_check` | Ba local tool mới xử lý evidence không cần thêm API key | `runs/v3_B_group_openrouter_20260729T134452170916.json` |
+| Coverage + boundary | `claim_coverage`; hành động gửi phải `clarify(yes_no)` | Hard action boundary loại free-text clarification sai | `runs/v3_B_base_openrouter_20260729T135116011751.json` |
 
 ---
 
 # PHẦN B — Chi tiết / Bằng chứng
 
-> Điều kiện metric hợp lệ: `provider_error_cases` phải bằng `0`; `measured_cases` phải bằng `total_cases`; và bất kỳ `tool_results` nào có error đều phải được review thủ công vì routing PASS không chứng minh tool execution đã đúng.
+Điều kiện metric hợp lệ đã đạt: `provider_error_cases = 0` và
+`measured_cases = total_cases` trong cả base run và group run cuối.
 
 ## B1. Version evidence
 
-Fill from `artifacts/version_log.csv` and `runs/*.json`.
-
-| Version | Prompt/tool change | Hypothesis | Metric name | Before | After | Run File |
+| Version | Prompt/tool change | Hypothesis | Metric | Before | After | Run File |
 |---|---|---|---|---:|---:|---|
-| v0 | baseline | Prompt ban đầu còn mơ hồ dễ dẫn tới sai routing & boundary | case_accuracy | N/A | 0.70 | `runs/v0_B_base_openrouter_20260729T095246782881.json` |
-| v1 | `artifacts/system_prompt.md` | Bổ sung quy tắc bắt buộc clarify khi thiếu thông tin giúp giảm lỗi routing | case_accuracy | 0.70 | 0.80 | `runs/v1_B_base_openrouter_20260729T095452922876.json` |
-| v2 | `artifacts/system_prompt.md` | Ưu tiên intent ở turn mới nhất và chuẩn hóa tham số giúp xử lý multi-turn chính xác | multiturn_accuracy | 0.50 | 0.67 | `runs/v2_B_base_openrouter_20260729T100020831257.json` |
-| v3 | `artifacts/system_prompt.md` & `artifacts/tools.yaml` | Cập nhật kênh/handle theo turn và thêm `source_triage` ngăn ngừa stale tool state | case_accuracy | 0.80 | 1.00 | `runs/v3_B_base_openrouter_20260729T101955589370.json` |
+| v0 | Baseline starter | Declaration mơ hồ sẽ lộ lỗi routing/boundary | case accuracy | — | 0.70 | `runs/v0_B_base_openrouter_20260729T095246782881.json` |
+| v1 | Intent, missing-info, confirmation và no-tool rules | Rule rõ sẽ giảm chọn tool/argument sai | case accuracy | 0.70 | 0.80 | `runs/v1_B_base_openrouter_20260729T095452922876.json` |
+| v2 | Latest-turn intent, canonical handles, confirmation precedence | Carryover/correction rõ sẽ tăng multi-turn | multi-turn accuracy | 0.50 | 0.6667 | `runs/v2_B_base_openrouter_20260729T100020831257.json` |
+| v3 | Hard channel/action gates và bốn team tools | Channel exclusivity + trigger cụ thể loại tool thừa | case accuracy | 0.80 | **1.00** | `runs/v3_B_base_openrouter_20260729T135116011751.json` |
 
 ## B2. Failure analysis
 
-Use actual failures from `results[*].result.failures`.
-
 | Case ID | Failure Type | Actual Tool Calls | What Failed | Fix |
 |---|---|---|---|---|
-| R10_missing_handle | missing_info | `timeline` | Agent tự ý chọn handle mặc định thay vì hỏi lại | Thêm quy tắc trong `system_prompt.md` yêu cầu gọi `clarify` khi thiếu `screenname` |
-| R11_missing_url | missing_info | `fetch` | Agent gọi `fetch` mà không có URL hợp lệ | Quy định bắt buộc có URL cụ thể mới được gọi `fetch`, ngược lại dùng `clarify` |
-| R12_confirm_before_send | wrong_boundary | `send` | Agent thực hiện hành động gửi tin nhắn mà chưa có xác nhận của user | Thêm quy tắc bảo mật hành động (boundary guardrail): Bắt buộc `clarify(yes_no)` trước khi `send` |
-| R13_parallel_web_and_tweets | wrong_tool | `lookup` \| `timeline` | Agent gọi nhầm `timeline` thay vì `social_search` khi tìm kiếm theo từ khóa | Phân biệt rõ intent giữa `timeline` (theo user screenname) và `social_search` (theo keyword) |
-| M03_correction_handle | wrong_arg_value | `timeline(altman)` | Multi-turn: Agent giữ lại handle cũ của lượt trước dù user đã yêu cầu đổi handle | Cập nhật nguyên tắc override intent: Luôn lấy canonical handle ở turn gần nhất |
+| `R03_web_news_routing` | wrong_tool | `lookup` + `social_search` | Từ “hôm nay/latest” làm model suy diễn social | Thêm hard channel gate: recency không bao giờ tự chọn social |
+| `M06_switch_tool` | wrong_tool | `lookup` + `social_search` | Social intent cũ bị khôi phục sau khi đã chuyển sang web | Quy định switch thay thế channel cũ và được duy trì ở follow-up |
+| `R12_confirm_before_send` | wrong_boundary | `clarify(response_type=text)` | Model hỏi nội dung trước thay vì xác nhận hành động | Hard action boundary bắt buộc first call là `yes_no` |
+| `G03/G04` lần đầu | runner comparison | Không đo được nested args | Scorer sort trực tiếp list chứa object | Chuẩn hóa object và sort bằng canonical JSON trong `run_eval.py` |
 
 ## B3. Team eval cases
 
-List the 10 cases added to `data/eval_group.json`:
-
-- 5 single-turn
-- 5 multi-turn
+Bộ `data/eval_group.json` có đúng 10 case: **5 single-turn + 5 multi-turn**.
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
-| G01_single_source_triage | Routes explicit credibility-triage request with concrete URLs to `source_triage` | `source_triage` | PASS |
-| G02_single_web_news_args | Maps explicit web-news keyword and weekly timeframe without adding social search | `lookup(query="cybersecurity", topic="news", timeframe="week")` | PASS |
-| G03_single_missing_url | Asks for a missing URL instead of inventing one or calling fetch | `clarify(response_type="text")` | PASS |
-| G04_single_no_tool_greeting | Avoids research tools for a simple writing request outside tool capabilities | `no_tool` | PASS |
-| G05_single_top_social | Routes explicit Twitter topic search and preserves Top plus limit arguments | `social_search(query="AI agents", search_type="Top", limit=3)` | PASS |
-| G06_multi_triage_carryover | Carries two concrete URLs across turns into the new tool without fetching them | `source_triage(urls=[...])` | PASS |
-| G07_multi_correct_account | Applies account correction and latest-turn result limit across three turns | `timeline(screenname="karpathy", limit=2)` | PASS |
-| G08_multi_send_boundary | Requires explicit yes/no confirmation before an external Telegram send | `clarify(response_type="yes_no")` | PASS |
-| G09_multi_web_carryover | Carries web-news intent and timeframe while replacing topic and setting a new result limit | `lookup(query="batteries", topic="news", timeframe="month", max_results=4)` | PASS |
-| G10_multi_cancel_no_tool | Honors cancellation and avoids executing the earlier research request | `no_tool` | PASS |
+| G01 | Triage hai URL trong một call | `source_triage` | PASS |
+| G02 | Chuẩn hóa và loại URL trùng | `source_deduplicate` | PASS |
+| G03 | Audit độ mới với mốc/ngưỡng cụ thể | `freshness_check` | PASS |
+| G04 | Tìm claim chưa có evidence | `claim_coverage` | PASS |
+| G05 | Lời chào không cần tool | no-tool | PASS |
+| G06 | Carry URL qua nhiều turn | `source_triage` | PASS |
+| G07 | Sửa tài khoản và limit | `timeline` | PASS |
+| G08 | Confirmation boundary | `clarify(yes_no)` | PASS |
+| G09 | Giữ web/timeframe, đổi topic | `lookup` | PASS |
+| G10 | Hủy yêu cầu cũ | no-tool | PASS |
 
-## B4. Live chat evidence
+Run: `runs/v3_B_group_openrouter_20260729T134452170916.json` — case accuracy,
+tool routing, argument và multi-turn đều **1.00**, provider errors **0**.
 
-Use `transcripts/*.transcript.json`.
+## B4. Live/eval evidence
 
-| Scenario/Turn | Version | Tool Calls + Args | Transcript/Run | Outcome |
+| Scenario | Version | Tool Calls | Transcript/Run | Outcome |
 |---|---|---|---|---|
-| Turn 1: Search news today | v3 | `lookup(query="AI", topic="news", timeframe="day")` | `transcripts/v3_openrouter_20260729T101346628398.transcript.json` | Thành công trả về các bài tin tức tin cậy về AI từ CNN, Wired, Reuters... |
-| Turn 2: Switch to Twitter | v3 | `social_search(query="AI", search_type="Top", limit=3)` | `transcripts/v3_openrouter_20260729T101346628398.transcript.json` | Chuyển đổi mượt mà sang tìm kiếm bài viết nổi bật trên Twitter |
+| Source triage | v3 | `source_triage(urls=[...])` | `runs/v3_B_group_openrouter_20260729T134452170916.json` | PASS |
+| Ba bonus utilities | v3 | `source_deduplicate`, `freshness_check`, `claim_coverage` | `runs/v3_B_group_openrouter_20260729T134452170916.json` | PASS |
+| Full regression | v3 | Core routing + boundary | `runs/v3_B_base_openrouter_20260729T135116011751.json` | 20/20 PASS |
 
 ## B5. Tool capability evidence
 
-Phân loại rõ tool mới bắt buộc, optional built-in và tool đủ điều kiện bonus. Chỉ ghi Telegram/PDF nếu nhóm thực sự dùng; base report không cần chúng.
-
-UI is core deliverable, not bonus. Do not list it here.
-
 | Category | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| Must-have: tool mới đầu tiên | `starter_v0/tools/source_triage/tool.py` | Triage độ tin cậy của các URL (WHO, OpenAI vs Unverified Social) | Tránh đánh giá sai các domain mới/lạ bằng cách fallback kiểm tra domain root |
-| Optional built-in | `starter_v0/tools/send/tool.py` | Gửi tin nhắn qua Telegram sau khi đã qua bước xác nhận | Bắt buộc kiểm tra `yes_no` confirmation từ `clarify` trước khi thực thi `send` |
-| Bonus: tool mới thứ 4 trở đi | N/A | Không áp dụng | N/A |
+| Must-have: tool mới #1 | `tools/source_triage/`; group G01/G06 | Tier 1/2/3 và gom mọi URL trong một call | Không fetch hoặc xác minh claim |
+| Team tool mới #2 | `tools/source_deduplicate/`; group G02 | Bỏ tracking, fragment và phát hiện duplicate | Không kiểm tra URL có truy cập được |
+| Team tool mới #3 | `tools/freshness_check/`; group G03 | Fresh/stale/future/invalid theo ngày | Không tự tìm ngày còn thiếu |
+| Bonus threshold: tool mới #4 | `tools/claim_coverage/`; group G04 | Coverage rate và uncovered claim IDs | Có nguồn không đồng nghĩa claim đúng |
+| Direct quicktest | `scripts/quicktest_bonus_tools.py` | Cả ba tool bổ sung trả `error=None` và đúng contract | Chạy lại trước khi nộp |
+
+Nhóm có **4 tool tự viết**, đạt điều kiện “hơn 3 tool mới”. Các optional built-in
+`send`, `policy`, `papers`, `paper_text` không được tính vào claim bonus.
 
 ## B6. Reflection
 
-- **Which fixes belonged in `system_prompt.md`?**: Các quy tắc định hướng hành vi (intent routing), thứ tự ưu tiên thông tin ở lượt chat cuối (latest-turn override), và quy tắc bảo đảm ranh giới hành động (chỉ gửi khi có xác nhận yes/no).
-- **Which fixes belonged in `tools.yaml`?**: Định nghĩa rõ ràng danh sách tham số (parameters), kiểu dữ liệu (types), và mô tả tác dụng của từng tool (`source_triage`, `lookup`, `timeline`, `social_search`).
-- **Which failure needed manual review instead of automatic grading?**: Các trường hợp tool trả về kết quả rỗng hoặc error message ẩn dưới dạng HTTP 200, hoặc khi so sánh ngữ nghĩa câu trả lời tóm tắt của LLM với văn bản gốc.
-- **What would you improve next?**: Tích hợp cơ chế cache cho kết quả `source_triage` và `fetch`, bổ sung thêm bộ lọc spam/tin giả tự động cho `social_search`.
+- Routing/boundary và channel carryover thuộc `system_prompt.md`.
+- Trigger, argument schema và mô tả capability thuộc `tools.yaml`.
+- Tool execution vẫn cần review thủ công; routing PASS không chứng minh nguồn đúng.
+- Bước tiếp theo: thêm property-based tests cho URL/date edge cases và transcript
+  live cho ba bonus utilities.

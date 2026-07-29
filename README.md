@@ -1,5 +1,5 @@
 # Day 04 Lab v2 — Research Agent Tool Eval
-
+https://day04-g10-e403-bdpjg7wgrh44pydaysszp7.streamlit.app/
 ## Brief
 
 Trong lab này, nhóm build một research agent nhỏ nhưng chạy thật. Agent nhận request của user, chọn tool, truyền arguments, chạy tool thật, lưu full JSON log, rồi dùng log đó để tối ưu prompt/tool declaration qua nhiều version.
