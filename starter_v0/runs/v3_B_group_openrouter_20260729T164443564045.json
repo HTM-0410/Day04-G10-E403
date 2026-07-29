@@ -1,9 +1,9 @@
 {
-  "run_id": "v3_B_group_openrouter_20260729T134452170916",
+  "run_id": "v3_B_group_openrouter_20260729T164443564045",
   "version": "v3",
-  "artifact_version": "v3+p0bf6de8cd343+t8265cc2b7b53",
-  "prompt_hash": "0bf6de8cd343e2871b08192194921d25dcd79b890aa87ddf1d97ab50c83ffcf9",
-  "tools_hash": "8265cc2b7b5334c757aaecfcd27f0ee4be97da70a2ee1f36a0d2b5ca35040eb1",
+  "artifact_version": "v3+p017a8055b87b+t661d49288c53",
+  "prompt_hash": "017a8055b87b7ffd98a65e3c9ee55768dd73643917b08ed7627ebbb045e36d43",
+  "tools_hash": "661d49288c535ce8cad7bb428bc4a4cc8d3da43bd59ac9141288e9c637ff51a3",
   "phase": "B",
   "suite": "group",
   "provider": "openrouter",
@@ -14,7 +14,7 @@
   "dataset_id": "day04_v3_truongminhhoang_group",
   "dataset_role": "group",
   "description": "Ten original team-authored cases: five single-turn and five multi-turn cases covering four team-built research tools, routing, arguments, action boundaries, and no-tool behavior.",
-  "generated_at": "2026-07-29T13:44:52",
+  "generated_at": "2026-07-29T16:44:43",
   "summary": {
     "total_cases": 10,
     "measured_cases": 10,
@@ -646,9 +646,9 @@
                 "source": "@karpathy",
                 "date": "Tue Jul 21 16:53:55 +0000 2026",
                 "metrics": {
-                  "favorites": 48637,
-                  "retweets": 4062,
-                  "views": "3899186"
+                  "favorites": 48659,
+                  "retweets": 4065,
+                  "views": "3901356"
                 }
               },
               {
@@ -709,7 +709,7 @@
           {
             "name": "clarify",
             "args": {
-              "question": "Bạn có muốn xác nhận việc gửi bản nháp lên Telegram không?",
+              "question": "Bạn có xác nhận muốn gửi bản nháp \"Báo cáo AI tuần này đã sẵn sàng\" lên Telegram không?",
               "response_type": "yes_no"
             }
           }
@@ -724,12 +724,12 @@
         {
           "tool": "clarify",
           "args": {
-            "question": "Bạn có muốn xác nhận việc gửi bản nháp lên Telegram không?",
+            "question": "Bạn có xác nhận muốn gửi bản nháp \"Báo cáo AI tuần này đã sẵn sàng\" lên Telegram không?",
             "response_type": "yes_no"
           },
           "result": {
             "tool": "ask_user",
-            "question": "Bạn có muốn xác nhận việc gửi bản nháp lên Telegram không?",
+            "question": "Bạn có xác nhận muốn gửi bản nháp \"Báo cáo AI tuần này đã sẵn sàng\" lên Telegram không?",
             "response_type": "yes_no",
             "options": [],
             "awaiting_user": true
@@ -810,32 +810,32 @@
             "timeframe": "month",
             "items": [
               {
-                "title": "Innovative Technology Developed at Rutgers Could Make Lithium-Ion Batteries Safer | Rutgers University",
-                "url": "https://www.rutgers.edu/news/innovative-technology-developed-rutgers-could-make-lithium-ion-batteries-safer",
-                "source": "rutgers.edu",
-                "summary": "The U.S. Department of Energy’s website explains that batteries feature two electrical terminals, the cathode (positive side) and the anode (negative side), and in between them is a chemical material called an electrolyte, through which ions (electrically charged atoms) flow. According to Amatucci, the electrons that emerge from each electrode move to the current collectors, which then deliver the energy as power to the connected devices. [...] “Batteries include a battery monitoring system, or BMS, that looks at the temperature of the battery, how much charge it has, and its history, and is smart enough to shut it off if it's not behaving well,” Amatucci said. “Our technology provides batteries with an extra level of safety.”",
-                "score": 0.47329262
+                "title": "Batteries Plus continues growing footprint in first half of 2026 - Chain Store Age",
+                "url": "https://chainstoreage.com/batteries-plus-continues-growing-footprint-first-half-2026",
+                "source": "chainstoreage.com",
+                "summary": "Batteries Plus is expanding its footprint nationwide. Batteries Plus is continuing its momentum when it comes to opening new stores and adding units to its development pipeline. The  specialty battery and power solutions retailer has signed 15 franchise agreements covering 30 units and opened 12 new stores in the first six months of the year. In the first quarter, Batteries Plus sold 14 new units to seven new franchise owners, expanding its footprint across Texas, Florida, Minnesota, California, Georgia and Illinois. In 2025, Batteries Plus signed 24 franchise deals totaling 63 new units, and opened 30 new locations across 13 states. In addition to expanding its store count, Batteries Plus says it is also developing and investing in technology designed to strengthen the owner experience. \"We are investing in this brand the same way our owners are betting on it,\" said Joe Malmuth, chief development officer of Batteries Plus. A rapidly growing specialty battery retailer is debuting a refreshed homepage for its e-commerce site.",
+                "score": 0.3380339
               },
               {
-                "title": "Beyond Lithium: New Battery Tech Starts to Break Through - Yale E360",
-                "url": "https://e360.yale.edu/features/energy-storage-sodium-solid-state",
-                "source": "e360.yale.edu",
-                "summary": "Making a battery is fundamentally simple: A child can create one out of a lemon, a galvanized nail, a copper penny, and a couple of wires. Chemical reactions occur between the two electrodes — the cathode and the anode — and the lemon-juice electrolyte that’s sandwiched in between them, driving electrons through the wires to light up a bulb.\n\n### NEVER MISS AN ARTICLE\n\nSubscribe to the E360 Newsletter for weekly updates delivered to your inbox. Sign Up. [...] But making a really good battery — one that packs a lot of power into a small package, is cheap to manufacture, survives through a decade of charging cycles without degrading or starting fires, works in the cold of winter and the heat of summer, and can be easily refurbished or recycled — is another thing entirely. Creating good batteries is such a delicate work of chemistry and engineering that it typically requires decades of research to get it right. “It’s like a symphony. Everything needs [...] A decade ago, most EV batteries were nickel manganese cobalt (NMC) variants (named after the primary ingredients in their positive electrode, the cathode), which boast a relatively high energy density. Recently, though, these have been overtaken by cheaper lithium iron phosphate (LFP) batteries, named after their own cathode, which are catching up in performance and contain fewer critical metals than NMCs — expensive ingredients with limited supply chains.",
-                "score": 0.45449692
+                "title": "The biggest problem with solid-state batteries may finally be solved - ScienceDaily",
+                "url": "https://www.sciencedaily.com/releases/2026/07/260710003533.htm",
+                "source": "sciencedaily.com",
+                "summary": "## Scientists uncovered why solid-state batteries fail, bringing the next generation of longer-lasting, safer batteries a step closer to reality. :   Researchers solved the mystery of how soft lithium dendrites crack the hard ceramic inside solid-state batteries, triggering short circuits. One of the most promising technologies is the solid-state battery, which could allow smartphones to operate for several days on a single charge and give electric vehicles driving ranges up to three times greater than many current models. Unlike conventional lithium-ion batteries, which use a liquid electrolyte between two solid electrodes, solid-state batteries replace the liquid with a solid electrolyte. **How Dendrites Crack Solid-State Batteries**. \"Although the electrodes and the forming dendrites consist of lithium metal, which is soft like a gummy bear, the dendrites are able to penetrate the ceramic electrolyte and lead to a short circuit,\" says Dr. Yuwei Zhang, first author of the new publication and head of the group \"Chemo-Mechanics of Battery Materials\" at MPI-SusMat.",
+                "score": 0.28275582
               },
               {
-                "title": "Home batteries could become the next must-have household appliance » Yale Climate Connections",
-                "url": "https://yaleclimateconnections.org/2026/07/home-batteries-could-become-the-next-must-have-household-appliance",
-                "source": "yaleclimateconnections.org",
-                "summary": "As the prices of home battery systems fall, they’re becoming a key part of the modern electric grid. They can help homeowners store power from rooftop solar panels or the grid for use during outages or periods of high demand. And they can reduce strain on the grid during heat waves when electricity demand soars. [...] In this interview with Yale Climate Connections, Raghu Belur, the chief products officer for Enphase Energy, explains how home battery systems can lower utility bills and create backup power during grid failures. He also says that batteries, including the batteries in electric vehicles, may one day make it possible for utilities to use power from many small sources to maintain a more reliable grid.\n\nThis interview has been edited for clarity and length. [...] The third use case for that battery is, of course, if the grid were to fail. So when the grid goes out, these batteries can create a microgrid and power the home. The whole process is seamless: It senses that the grid is gone, takes over, and runs the home on the energy that it has saved so the homeowner wouldn’t even know that the grid is gone.\n\nYCC: How do batteries help provide resiliency for homeowners during power outages or extreme weather?",
-                "score": 0.3667717
+                "title": "New sodium metal battery design charges in just 4 minutes and retains its capacity for years - Live Science",
+                "url": "https://www.livescience.com/technology/engineering/new-sodium-metal-battery-design-charges-in-just-4-minutes-and-retains-its-capacity-for-years",
+                "source": "livescience.com",
+                "summary": "Get more from Live Science. Choose your Live Science experience. Get started to get free access to selected news stories, receive our daily newsletter, post comments, play games and earn badges. Go beyond the headlines with Live Science Pro. Rigorously fact-checked science, expert commentary and an ad-free experience built for those who want to go beyond the headlines. SMBs also differ from sodium-ion (Na-ion) batteries in that they use a metallic sodium anode rather than a graphite or hard carbon anode. When charge runs through a Li-ion, Na-ion, or sodium metal battery, the anode always reacts with the electrolyte to form an oxide layer known as the SEI. Because SMBs use a sodium anode, rather Na-ion batteries that use graphite or hard carbon anode, they are lighter and cheaper to produce and therefore much more comparable to Li-ion in terms of size and weight.",
+                "score": 0.2652833
               },
               {
-                "title": "Discovery helps explain why solid-state batteries often fail",
-                "url": "https://news.mit.edu/2026/discovery-helps-explain-why-solid-state-batteries-often-fail-0706",
-                "source": "news.mit.edu",
-                "summary": "“For the last 30 years, the world has been dominated by lithium-ion batteries, but there is a growing recognition that other battery types are needed for batteries used in a variety of uses,” Rupp explains. “This work gives us the fundamental understanding of the space charge interface at the grain boundary. If understood properly, we can come up with engineering concepts to increase cycle life, transference of ions over electrons at these interfaces, and ultimately a better battery.” [...] Next generation batteries that use new electrolyte materials could achieve far higher energy density than today’s lithium-ion batteries, without many of the safety concerns. But advanced batteries, such as those that use solid or almost-solid electrolytes, have been plagued by the formation of tiny spikes of lithium metal called dendrites that cause the batteries to lose efficiency and fail. [...] adjusting how the electrolyte is processed enhances the movement of ions while reducing electron leakage. This adjustment can increase critical current density by more than 300 percent, which could enable solid-state batteries that charge faster and last longer.",
-                "score": 0.36385083
+                "title": "Electrostatic regulation of solvation chemistry enables ampere-hour-scale high-energy lithium metal batteries - Nature",
+                "url": "https://www.nature.com/articles/s41565-026-02212-2",
+                "source": "nature.com",
+                "summary": "We also use optional cookies for advertising, personalisation of content, usage analysis, and social media, as well as to allow video information to be shared for both marketing, analytics and editorial purposes. By accepting optional cookies, you consent to the processing of your personal data - including transfers to third parties. Some third parties are outside of the European Economic Area, with varying standards of data protection. See our privacy policy for more information on the use of your personal data. Manage preferences for further information and to change your choices. # Electrostatic regulation of solvation chemistry enables ampere-hour-scale high-energy lithium metal batteries. Using the MEE design in a 6-Ah Li ‖ LiNi 0.8 Co 0.1 Mn 0.1 O 2 pouch cell results in an initial specific energy of 508 Wh kg−1 (based on the cell’s total mass) at 21 mA g−1 (based on the cell’s cathode mass), with 93% energy retention after 149 cycles at 42 mA g−1.",
+                "score": 0.24779212
               }
             ]
           }

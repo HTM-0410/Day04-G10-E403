@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from agent import coalesce_batch_tool_calls
 from env_loader import load_lab_env
 from providers import make_provider
 from providers.base import ToolCall
@@ -91,7 +92,7 @@ def run_model_tool_loop(
 
     for round_index in range(1, max_tool_rounds + 1):
         response = provider.complete(working_messages, tools, model=model, temperature=0.0)
-        calls = response.tool_calls
+        calls = coalesce_batch_tool_calls(response.tool_calls)
         round_record: dict[str, Any] = {
             "round": round_index,
             "assistant_text": response.text,

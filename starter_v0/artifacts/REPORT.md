@@ -26,8 +26,7 @@ Research agent hỗ trợ tìm kiếm web và mạng xã hội, đọc URL, trì
 phân loại độ tin cậy của nguồn và kiểm tra chất lượng bộ evidence trước khi tổng
 hợp. Agent có ranh giới xác nhận rõ ràng đối với hành động bên ngoài.
 
-**Link dùng thử:** Streamlit UI chạy bằng `starter_v0/app.py`; public URL được
-điền sau khi hoàn tất đăng nhập Streamlit Community Cloud.
+**Link dùng thử:** https://day04-g10-e403-bdpjg7wgrh44pydaysszp7.streamlit.app/
 
 ## A2. Tool agent có
 
@@ -56,9 +55,9 @@ hợp. Agent có ranh giới xác nhận rõ ràng đối với hành động b�
 
 | Scenario | Tool trace cần thấy | Câu chuyện cải thiện | Fallback run |
 |---|---|---|---|
-| Source quality | `source_triage` với tất cả URL trong một call | Declaration rõ giúp không tách URL hoặc gọi social nhầm | `runs/v3_B_group_openrouter_20260729T134452170916.json` |
-| Evidence cleanup | `source_deduplicate` → `freshness_check` | Ba local tool mới xử lý evidence không cần thêm API key | `runs/v3_B_group_openrouter_20260729T134452170916.json` |
-| Coverage + boundary | `claim_coverage`; hành động gửi phải `clarify(yes_no)` | Hard action boundary loại free-text clarification sai | `runs/v3_B_base_openrouter_20260729T135116011751.json` |
+| Source quality | `source_triage` với tất cả URL trong một call | Batch guard đảm bảo một request chỉ tạo một call chứa đủ URL | `runs/v3_B_group_openrouter_20260729T164443564045.json` |
+| Evidence cleanup | `source_deduplicate` → `freshness_check` | Ba local tool mới xử lý evidence không cần thêm API key | `runs/v3_B_group_openrouter_20260729T164443564045.json` |
+| Coverage + boundary | `claim_coverage`; hành động gửi phải `clarify(yes_no)` | Hard action boundary loại free-text clarification sai | `runs/v3_B_base_openrouter_20260729T164624160663.json` |
 
 ---
 
@@ -74,7 +73,7 @@ hợp. Agent có ranh giới xác nhận rõ ràng đối với hành động b�
 | v0 | Baseline starter | Declaration mơ hồ sẽ lộ lỗi routing/boundary | case accuracy | — | 0.70 | `runs/v0_B_base_openrouter_20260729T095246782881.json` |
 | v1 | Intent, missing-info, confirmation và no-tool rules | Rule rõ sẽ giảm chọn tool/argument sai | case accuracy | 0.70 | 0.80 | `runs/v1_B_base_openrouter_20260729T095452922876.json` |
 | v2 | Latest-turn intent, canonical handles, confirmation precedence | Carryover/correction rõ sẽ tăng multi-turn | multi-turn accuracy | 0.50 | 0.6667 | `runs/v2_B_base_openrouter_20260729T100020831257.json` |
-| v3 | Hard channel/action gates và bốn team tools | Channel exclusivity + trigger cụ thể loại tool thừa | case accuracy | 0.80 | **1.00** | `runs/v3_B_base_openrouter_20260729T135116011751.json` |
+| v3 | Hard channel/action gates, bốn team tools và batch guard | Channel exclusivity + batching contract loại tool thừa/tách call | case accuracy | 0.80 | **1.00** | `runs/v3_B_base_openrouter_20260729T164624160663.json` |
 
 ## B2. Failure analysis
 
@@ -83,6 +82,7 @@ hợp. Agent có ranh giới xác nhận rõ ràng đối với hành động b�
 | `R03_web_news_routing` | wrong_tool | `lookup` + `social_search` | Từ “hôm nay/latest” làm model suy diễn social | Thêm hard channel gate: recency không bao giờ tự chọn social |
 | `M06_switch_tool` | wrong_tool | `lookup` + `social_search` | Social intent cũ bị khôi phục sau khi đã chuyển sang web | Quy định switch thay thế channel cũ và được duy trì ở follow-up |
 | `R12_confirm_before_send` | wrong_boundary | `clarify(response_type=text)` | Model hỏi nội dung trước thay vì xác nhận hành động | Hard action boundary bắt buộc first call là `yes_no` |
+| `G01_single_source_triage` | wrong_tool | Hai `source_triage` call, mỗi call một URL | Model tách batch dù prompt yêu cầu một call | Batching invariant + agent-layer coalescing guard |
 | `G03/G04` lần đầu | runner comparison | Không đo được nested args | Scorer sort trực tiếp list chứa object | Chuẩn hóa object và sort bằng canonical JSON trong `run_eval.py` |
 
 ## B3. Team eval cases
@@ -102,16 +102,16 @@ Bộ `data/eval_group.json` có đúng 10 case: **5 single-turn + 5 multi-turn**
 | G09 | Giữ web/timeframe, đổi topic | `lookup` | PASS |
 | G10 | Hủy yêu cầu cũ | no-tool | PASS |
 
-Run: `runs/v3_B_group_openrouter_20260729T134452170916.json` — case accuracy,
+Run: `runs/v3_B_group_openrouter_20260729T164443564045.json` — case accuracy,
 tool routing, argument và multi-turn đều **1.00**, provider errors **0**.
 
 ## B4. Live/eval evidence
 
 | Scenario | Version | Tool Calls | Transcript/Run | Outcome |
 |---|---|---|---|---|
-| Source triage | v3 | `source_triage(urls=[...])` | `runs/v3_B_group_openrouter_20260729T134452170916.json` | PASS |
-| Ba bonus utilities | v3 | `source_deduplicate`, `freshness_check`, `claim_coverage` | `runs/v3_B_group_openrouter_20260729T134452170916.json` | PASS |
-| Full regression | v3 | Core routing + boundary | `runs/v3_B_base_openrouter_20260729T135116011751.json` | 20/20 PASS |
+| Source triage | v3 | `source_triage(urls=[...])` | `runs/v3_B_group_openrouter_20260729T164443564045.json` | PASS |
+| Ba bonus utilities | v3 | `source_deduplicate`, `freshness_check`, `claim_coverage` | `runs/v3_B_group_openrouter_20260729T164443564045.json` | PASS |
+| Full regression | v3 | Core routing + boundary | `runs/v3_B_base_openrouter_20260729T164624160663.json` | 20/20 PASS |
 
 ## B5. Tool capability evidence
 
@@ -121,7 +121,7 @@ tool routing, argument và multi-turn đều **1.00**, provider errors **0**.
 | Team tool mới #2 | `tools/source_deduplicate/`; group G02 | Bỏ tracking, fragment và phát hiện duplicate | Không kiểm tra URL có truy cập được |
 | Team tool mới #3 | `tools/freshness_check/`; group G03 | Fresh/stale/future/invalid theo ngày | Không tự tìm ngày còn thiếu |
 | Bonus threshold: tool mới #4 | `tools/claim_coverage/`; group G04 | Coverage rate và uncovered claim IDs | Có nguồn không đồng nghĩa claim đúng |
-| Direct quicktest | `scripts/quicktest_bonus_tools.py` | Cả ba tool bổ sung trả `error=None` và đúng contract | Chạy lại trước khi nộp |
+| Direct quicktest | `scripts/quicktest_bonus_tools.py` | Ba tool trả `error=None`; batch guard gộp 2 URL thành 1 call | Chạy lại trước khi nộp |
 
 Nhóm có **4 tool tự viết**, đạt điều kiện “hơn 3 tool mới”. Các optional built-in
 `send`, `policy`, `papers`, `paper_text` không được tính vào claim bonus.

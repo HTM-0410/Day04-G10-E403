@@ -10,6 +10,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools import TOOL_FUNCTIONS  # noqa: E402
+from agent import coalesce_batch_tool_calls  # noqa: E402
+from providers.base import ToolCall  # noqa: E402
 
 
 def main() -> None:
@@ -49,6 +51,16 @@ def main() -> None:
     assert coverage["coverage_rate"] == 0.5
     assert coverage["uncovered_claim_ids"] == ["C2"]
 
+    batched_calls = coalesce_batch_tool_calls([
+        ToolCall(name="source_triage", args={"urls": ["https://who.int/news"]}),
+        ToolCall(name="source_triage", args={"urls": ["https://x.com/example/status/1"]}),
+    ])
+    assert len(batched_calls) == 1
+    assert batched_calls[0].args["urls"] == [
+        "https://who.int/news",
+        "https://x.com/example/status/1",
+    ]
+
     summary = {
         "source_deduplicate": {
             "error": deduplicate["error"],
@@ -63,6 +75,10 @@ def main() -> None:
             "error": coverage["error"],
             "coverage_rate": coverage["coverage_rate"],
             "uncovered_claim_ids": coverage["uncovered_claim_ids"],
+        },
+        "batch_guard": {
+            "call_count": len(batched_calls),
+            "url_count": len(batched_calls[0].args["urls"]),
         },
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))

@@ -78,7 +78,7 @@ tools:
       required: [items, template]
 
   - name: source_triage
-    description: "Classify concrete source URLs into research-evidence Tier 1, 2, or 3. Put ALL supplied URLs into one urls array and call this tool exactly once; NEVER split one URL list across multiple calls. Twitter/X/Reddit URLs are inputs to classify, not requests to call timeline or social_search. Use only for source assessment/triage; this tool does not fetch pages or verify claims. If URLs are missing, use clarify instead."
+    description: "BATCH TOOL: classify concrete source URLs into research-evidence Tier 1, 2, or 3. One user request must produce exactly ONE source_triage call total. Count every supplied URL and put ALL of them into that one urls array; NEVER call once per URL, split by domain/tier, or parallelize multiple source_triage calls. Twitter/X/Reddit URLs are inputs to classify, not requests to call timeline or social_search. Use only for source assessment/triage; this tool does not fetch pages or verify claims. If URLs are missing, use clarify instead."
     parameters:
       type: object
       properties:
