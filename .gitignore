@@ -17,6 +17,9 @@ starter/
 # Tool scratch output
 arxiv_papers/
 
+# Streamlit demo runtime artifacts
+starter_v0/transcripts/ui_*.transcript.json
+
 # OS / editor
 .DS_Store
 Thumbs.db

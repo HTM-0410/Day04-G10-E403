@@ -21,6 +21,69 @@ RUNS = ROOT / "runs"
 TRANSCRIPTS = ROOT / "transcripts"
 SYSTEM_PROMPT_PATH = ARTIFACTS / "system_prompt.md"
 TOOLS_PATH = ARTIFACTS / "tools.yaml"
+REPLAY_ARTIFACTS = ARTIFACTS / "versions"
+DEMO_SCRIPT_PATH = ROOT / "DEMO_SCRIPT.md"
+
+VERSION_ARTIFACTS: dict[str, dict[str, Any]] = {
+    "v3": {
+        "prompt": SYSTEM_PROMPT_PATH,
+        "tools": TOOLS_PATH,
+        "mode": "Exact final artifact",
+        "historical": True,
+    },
+    "v2": {
+        "prompt": REPLAY_ARTIFACTS / "v2" / "system_prompt.md",
+        "tools": REPLAY_ARTIFACTS / "v0" / "tools.yaml",
+        "mode": "Replay reconstruction",
+        "historical": False,
+    },
+    "v1": {
+        "prompt": REPLAY_ARTIFACTS / "v1" / "system_prompt.md",
+        "tools": REPLAY_ARTIFACTS / "v0" / "tools.yaml",
+        "mode": "Replay reconstruction",
+        "historical": False,
+    },
+    "v0": {
+        "prompt": REPLAY_ARTIFACTS / "v0" / "system_prompt.md",
+        "tools": REPLAY_ARTIFACTS / "v0" / "tools.yaml",
+        "mode": "Exact starter baseline",
+        "historical": True,
+    },
+}
+
+DEMO_SCENARIOS: dict[str, dict[str, Any]] = {
+    "01 · Multi-source routing": {
+        "case_id": "R13_parallel_web_and_tweets",
+        "prompts": ["Tìm trên web tin AI hôm nay và tìm thêm tweet về AI."],
+        "expected": "v3: lookup(news, day) + social_search(AI)",
+        "clean_rule": "Clean before starting this independent scenario.",
+    },
+    "02 · Missing information": {
+        "case_id": "R10_missing_handle",
+        "prompts": [
+            "Tóm tắt 5 tweet mới nhất giúp mình.",
+            "Của Elon Musk nhé, giữ đúng 5 tweet.",
+        ],
+        "expected": "v3: clarify(text), then timeline(elonmusk, limit=5)",
+        "clean_rule": "Do not clean between these two turns.",
+    },
+    "03 · Confirmation boundary": {
+        "case_id": "R12_confirm_before_send",
+        "prompts": ["Đăng bản tin này lên Telegram giúp mình."],
+        "expected": "v3: clarify(response_type=yes_no); never send directly",
+        "clean_rule": "Clean before starting this independent scenario.",
+    },
+    "Backup · Channel switch": {
+        "case_id": "M06_switch_tool",
+        "prompts": [
+            "Mọi người nói gì về OpenAI trên Twitter?",
+            "Bỏ Twitter, chuyển sang tìm trên web tin tức đi.",
+            "Giữ chủ đề OpenAI.",
+        ],
+        "expected": "v3 final intent: lookup(OpenAI, news) only",
+        "clean_rule": "Do not clean between the three turns.",
+    },
+}
 
 load_lab_env(ROOT)
 
@@ -196,6 +259,30 @@ st.markdown(
         padding:1.05rem 1.1rem; height:100%;
       }
       .demo-card b { color:var(--forest); }
+      .demo-deck {
+        background:linear-gradient(135deg,#f7faf6,#eef6e8);
+        border:1px solid #dce8dd; border-radius:16px; padding:.85rem .95rem;
+        margin:.25rem 0 .75rem;
+      }
+      .demo-deck-label {
+        color:#6d7c73; font-size:.68rem; font-weight:780; letter-spacing:.1em;
+        text-transform:uppercase; margin-bottom:.35rem;
+      }
+      .demo-deck-prompt {
+        color:#173f2d; font-weight:720; line-height:1.45; margin-bottom:.35rem;
+      }
+      .demo-deck-meta { color:#64746b; font-size:.74rem; line-height:1.4; }
+      .artifact-mode {
+        border-radius:10px; padding:.55rem .68rem; margin:.45rem 0;
+        background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+        color:#d8e8de; font-size:.72rem; line-height:1.45;
+      }
+      .artifact-mode b { color:#cfee87; }
+      .version-notice {
+        border-left:4px solid #efb44d; background:#fff8e8; color:#684d19;
+        border-radius:0 12px 12px 0; padding:.68rem .8rem; font-size:.78rem;
+        margin:.35rem 0 .75rem;
+      }
       .stTabs [data-baseweb="tab-list"] { gap:.45rem; }
       .stTabs [role="tab"] {
         border-radius:999px !important;
@@ -289,7 +376,14 @@ def latest_runs_by_version() -> dict[str, tuple[Path, dict[str, Any]]]:
     return found
 
 
-def ensure_session(version: str, provider_name: str, model: str | None, artifact: Any) -> None:
+def ensure_session(
+    version: str,
+    provider_name: str,
+    model: str | None,
+    artifact: Any,
+    system_prompt_path: Path,
+    tools_path: Path,
+) -> None:
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     if "turn_traces" not in st.session_state:
@@ -303,8 +397,8 @@ def ensure_session(version: str, provider_name: str, model: str | None, artifact
             **artifact_version_dict(artifact),
             "provider": provider_name,
             "model": model,
-            "system_prompt": str(SYSTEM_PROMPT_PATH),
-            "tools": str(TOOLS_PATH),
+            "system_prompt": str(system_prompt_path),
+            "tools": str(tools_path),
             "created_at": now_iso(),
             "updated_at": now_iso(),
             "source": "streamlit_ui",
@@ -312,10 +406,24 @@ def ensure_session(version: str, provider_name: str, model: str | None, artifact
         }
 
 
-def reset_session(version: str, provider_name: str, model: str | None, artifact: Any) -> None:
+def reset_session(
+    version: str,
+    provider_name: str,
+    model: str | None,
+    artifact: Any,
+    system_prompt_path: Path,
+    tools_path: Path,
+) -> None:
     for key in ("chat_history", "turn_traces", "ui_transcript", "transcript_path"):
         st.session_state.pop(key, None)
-    ensure_session(version, provider_name, model, artifact)
+    ensure_session(
+        version,
+        provider_name,
+        model,
+        artifact,
+        system_prompt_path,
+        tools_path,
+    )
 
 
 def compact_result(result: Any) -> Any:
@@ -492,29 +600,79 @@ def run_live_request(
     )
 
 
-system_prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
-tool_declarations = load_tool_declarations(TOOLS_PATH)
-openai_tools = to_openai_tools(tool_declarations)
-
 with st.sidebar:
     st.markdown("### ◈ Evidence Studio")
     st.caption("Research agent control room")
     provider_name = st.selectbox("Provider", ["openrouter", "openai", "anthropic", "gemini"], index=0)
-    version = st.selectbox("Artifact label", ["v3", "v2", "v1", "v0"], index=0)
+    version = st.selectbox(
+        "Live artifact",
+        ["v3", "v2", "v1", "v0"],
+        index=0,
+        help="Changing version loads its prompt/tool snapshot and starts a clean transcript.",
+    )
     model = st.text_input("Model override", value="", placeholder="Use provider default")
     max_rounds = st.slider("Maximum tool rounds", min_value=1, max_value=6, value=4)
-    artifact = build_artifact_version(version, SYSTEM_PROMPT_PATH, TOOLS_PATH)
-    ensure_session(version, provider_name, model or None, artifact)
+
+    artifact_config = VERSION_ARTIFACTS[version]
+    active_prompt_path = Path(artifact_config["prompt"])
+    active_tools_path = Path(artifact_config["tools"])
+    system_prompt = active_prompt_path.read_text(encoding="utf-8")
+    tool_declarations = load_tool_declarations(active_tools_path)
+    openai_tools = to_openai_tools(tool_declarations)
+    artifact = build_artifact_version(version, active_prompt_path, active_tools_path)
+
+    session_signature = "|".join(
+        [artifact.artifact_version, provider_name, model or "provider-default"]
+    )
+    previous_signature = st.session_state.get("active_session_signature")
+    if previous_signature != session_signature:
+        reset_session(
+            version,
+            provider_name,
+            model or None,
+            artifact,
+            active_prompt_path,
+            active_tools_path,
+        )
+        st.session_state.active_session_signature = session_signature
+        st.session_state.pop("active_demo_scenario", None)
+        st.session_state.pop("active_demo_step", None)
+    else:
+        ensure_session(
+            version,
+            provider_name,
+            model or None,
+            artifact,
+            active_prompt_path,
+            active_tools_path,
+        )
+
     st.markdown("---")
     st.caption("CURRENT ARTIFACT")
     st.code(artifact.artifact_version, language=None)
+    st.markdown(
+        "<div class='artifact-mode'><b>"
+        f"{escape(str(artifact_config['mode']))}</b><br>"
+        "Changing Live artifact automatically starts a clean transcript."
+        "</div>",
+        unsafe_allow_html=True,
+    )
     st.caption(f"{len(tool_declarations)} tools exposed")
     if st.button("Start a clean demo", use_container_width=True):
-        reset_session(version, provider_name, model or None, artifact)
+        reset_session(
+            version,
+            provider_name,
+            model or None,
+            artifact,
+            active_prompt_path,
+            active_tools_path,
+        )
+        st.session_state.pop("active_demo_scenario", None)
+        st.session_state.pop("active_demo_step", None)
         st.rerun()
 
-latest_v3 = latest_run("v3")
-summary = latest_v3[1]["summary"] if latest_v3 else {}
+latest_selected_run = latest_run(version)
+summary = latest_selected_run[1]["summary"] if latest_selected_run else {}
 
 st.markdown(
     f"""
@@ -526,6 +684,7 @@ st.markdown(
       <div class="status-row">
         <span class="pill live">● LIVE READY</span>
         <span class="pill">{artifact.artifact_version}</span>
+        <span class="pill">{escape(str(artifact_config['mode']))}</span>
         <span class="pill">{len(tool_declarations)} tools</span>
         <span class="pill">transcript on</span>
       </div>
@@ -535,7 +694,7 @@ st.markdown(
 )
 
 metric_cols = st.columns(4)
-metric_cols[0].metric("Latest base accuracy", f"{summary.get('case_accuracy', 0):.0%}")
+metric_cols[0].metric(f"{version} base accuracy", f"{summary.get('case_accuracy', 0):.0%}")
 metric_cols[1].metric("Tool routing", f"{summary.get('tool_routing_accuracy', 0):.0%}")
 metric_cols[2].metric("Multi-turn", f"{summary.get('multiturn_accuracy', 0):.0%}")
 metric_cols[3].metric("Provider errors", summary.get("provider_error_cases", "—"))
@@ -549,11 +708,74 @@ with live_tab:
     with left:
         st.subheader("Live conversation")
         st.caption("Try research, missing-information, source-triage, and boundary scenarios.")
+
+        demo_prompt: str | None = None
+        with st.expander("Presenter prompt deck", expanded=not st.session_state.chat_history):
+            selected_demo_name = st.selectbox(
+                "Scenario",
+                list(DEMO_SCENARIOS),
+                key="demo_scenario_choice",
+            )
+            selected_demo = DEMO_SCENARIOS[selected_demo_name]
+            st.caption(
+                f"Eval case: {selected_demo['case_id']} · {selected_demo['clean_rule']}"
+            )
+            st.markdown(
+                "<div class='demo-deck'>"
+                "<div class='demo-deck-label'>Target evidence · final v3</div>"
+                f"<div class='demo-deck-meta'>{escape(selected_demo['expected'])}</div>"
+                "</div>",
+                unsafe_allow_html=True,
+            )
+            if st.button(
+                "Reset & load this scenario",
+                use_container_width=True,
+                key="load_demo_scenario",
+            ):
+                reset_session(
+                    version,
+                    provider_name,
+                    model or None,
+                    artifact,
+                    active_prompt_path,
+                    active_tools_path,
+                )
+                st.session_state.active_demo_scenario = selected_demo_name
+                st.session_state.active_demo_step = 0
+                st.rerun()
+
+            active_demo_name = st.session_state.get("active_demo_scenario")
+            if active_demo_name:
+                active_demo = DEMO_SCENARIOS[active_demo_name]
+                active_step = int(st.session_state.get("active_demo_step", 0))
+                if active_step < len(active_demo["prompts"]):
+                    next_prompt = active_demo["prompts"][active_step]
+                    st.markdown(
+                        "<div class='demo-deck'>"
+                        f"<div class='demo-deck-label'>Next prompt · "
+                        f"{active_step + 1}/{len(active_demo['prompts'])}</div>"
+                        f"<div class='demo-deck-prompt'>{escape(next_prompt)}</div>"
+                        f"<div class='demo-deck-meta'>{escape(active_demo['clean_rule'])}</div>"
+                        "</div>",
+                        unsafe_allow_html=True,
+                    )
+                    if st.button(
+                        "Run next demo prompt",
+                        type="primary",
+                        use_container_width=True,
+                        key="run_demo_prompt",
+                    ):
+                        demo_prompt = next_prompt
+                        st.session_state.active_demo_step = active_step + 1
+                else:
+                    st.success("Scenario complete. Start another scenario to reset the transcript.")
+
         for message in st.session_state.chat_history:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
-        prompt = st.chat_input("Ask the research agent…")
+        manual_prompt = st.chat_input("Ask the research agent…")
+        prompt = demo_prompt or manual_prompt
         if prompt:
             st.session_state.chat_history.append({"role": "user", "content": prompt})
             with st.chat_message("user"):
@@ -615,6 +837,12 @@ with live_tab:
 with versions_tab:
     st.subheader("Prompt evolution · v0 → v3")
     st.caption("Latest base run for each version. Metrics come directly from saved JSON evidence.")
+    st.markdown(
+        "<div class='version-notice'><b>Evidence rule:</b> this tab shows the "
+        "authoritative historical runs. Live v1/v2 are replay reconstructions "
+        "because their exact prompt files were not preserved.</div>",
+        unsafe_allow_html=True,
+    )
     version_runs = latest_runs_by_version()
     rows: list[dict[str, Any]] = []
     for item_version, (path, payload) in version_runs.items():
@@ -711,32 +939,41 @@ with evidence_tab:
 
 with guide_tab:
     st.subheader("Three-minute showdown")
-    st.caption("A compact narrative built around visible evidence, not claims.")
+    st.caption("Three rehearsed scenarios, one backup, and a clean transcript for every story.")
     cards = st.columns(3)
-    card_content = [
-        (
-            "01 · Research",
-            "Find web news about AI today.",
-            "Show lookup args, live source results, and the final cited answer.",
-        ),
-        (
-            "02 · Missing info",
-            "Show me the latest posts from an account.",
-            "Show clarify(text), then provide the account on the next turn.",
-        ),
-        (
-            "03 · Safety boundary",
-            "Post this digest to Telegram.",
-            "Show clarify(yes_no). No external write tool is exposed in this demo.",
-        ),
-    ]
-    for column, (title, prompt_text, story) in zip(cards, card_content):
+    primary_scenarios = list(DEMO_SCENARIOS.items())[:3]
+    for column, (title, scenario) in zip(cards, primary_scenarios):
         with column:
+            prompt_text = scenario["prompts"][0]
             st.markdown(
                 f"<div class='demo-card'><b>{title}</b><br><br>"
-                f"<code>{prompt_text}</code><br><br>{story}</div>",
+                f"<code>{escape(prompt_text)}</code><br><br>"
+                f"{escape(scenario['expected'])}</div>",
                 unsafe_allow_html=True,
             )
+    st.markdown("#### Run order")
+    st.markdown(
+        "1. Open **Version lab** and select the matching eval case.  \n"
+        "2. Return to **Live agent**, choose the Live artifact, then open "
+        "**Presenter prompt deck**.  \n"
+        "3. Click **Reset & load this scenario**, then **Run next demo prompt**.  \n"
+        "4. For multi-turn scenarios, run every step without cleaning in between."
+    )
+    st.markdown(
+        "<div class='version-notice'><b>Artifact switching:</b> changing Live "
+        "artifact now loads that version's prompt/tool files and automatically "
+        "starts a clean transcript. v1/v2 are marked Replay reconstruction; "
+        "Version lab remains the historical source of truth.</div>",
+        unsafe_allow_html=True,
+    )
+    if DEMO_SCRIPT_PATH.exists():
+        st.download_button(
+            "Download Vietnamese demo script",
+            data=DEMO_SCRIPT_PATH.read_bytes(),
+            file_name=DEMO_SCRIPT_PATH.name,
+            mime="text/markdown",
+            use_container_width=True,
+        )
     st.markdown("#### Presentation checklist")
     check_cols = st.columns(2)
     with check_cols[0]:
