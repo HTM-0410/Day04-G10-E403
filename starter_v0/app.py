@@ -26,20 +26,20 @@ DEMO_SCRIPT_PATH = ROOT / "DEMO_SCRIPT.md"
 
 VERSION_ARTIFACTS: dict[str, dict[str, Any]] = {
     "v3": {
-        "prompt": SYSTEM_PROMPT_PATH,
-        "tools": TOOLS_PATH,
-        "mode": "Exact final artifact",
+        "prompt": REPLAY_ARTIFACTS / "v3" / "system_prompt.md",
+        "tools": REPLAY_ARTIFACTS / "v3" / "tools.yaml",
+        "mode": "Exact final snapshot",
         "historical": True,
     },
     "v2": {
         "prompt": REPLAY_ARTIFACTS / "v2" / "system_prompt.md",
-        "tools": REPLAY_ARTIFACTS / "v0" / "tools.yaml",
+        "tools": REPLAY_ARTIFACTS / "v2" / "tools.yaml",
         "mode": "Replay reconstruction",
         "historical": False,
     },
     "v1": {
         "prompt": REPLAY_ARTIFACTS / "v1" / "system_prompt.md",
-        "tools": REPLAY_ARTIFACTS / "v0" / "tools.yaml",
+        "tools": REPLAY_ARTIFACTS / "v1" / "tools.yaml",
         "mode": "Replay reconstruction",
         "historical": False,
     },
@@ -606,7 +606,7 @@ with st.sidebar:
     provider_name = st.selectbox("Provider", ["openrouter", "openai", "anthropic", "gemini"], index=0)
     version = st.selectbox(
         "Live artifact",
-        ["v3", "v2", "v1", "v0"],
+        list(VERSION_ARTIFACTS),
         index=0,
         help="Changing version loads its prompt/tool snapshot and starts a clean transcript.",
     )

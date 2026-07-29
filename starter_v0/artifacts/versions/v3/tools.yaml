@@ -1,0 +1,146 @@
+# starter_v0 — tool declarations (intentionally vague).
+# Names and descriptions here are a rough first draft. Routing rules, name->handle
+# mapping, arg conventions (news/timeframe/Top), and the send-confirmation boundary
+# are NOT spelled out anywhere yet. Your job is to make these declarations + the
+# system prompt good enough that the agent routes correctly on the eval.
+#
+# If you rename a tool, keep the name in sync across:
+#   this file  ->  tools/__init__.py (TOOL_FUNCTIONS)  ->  data/eval_base.json + data/eval_research_extension.json
+tools:
+  # ---------------- Core tools ----------------
+  - name: clarify
+    description: "Ask for required missing information or confirmation. Use response_type=text for a missing handle, URL, or value. For any send, post, publish, or other unconfirmed external write request, always use response_type=yes_no; do not ask for content with response_type=text first."
+    parameters:
+      type: object
+      properties:
+        question: {type: string, default: "", description: "Câu hỏi"}
+        response_type: {type: string, enum: [text, yes_no, choice], default: "text", description: "Kiểu trả lời"}
+        options: {type: array, default: [], items: {type: string}, description: "Các lựa chọn"}
+      required: [question]
+
+  - name: timeline
+    description: "Lấy các bài đăng gần đây."
+    parameters:
+      type: object
+      properties:
+        screenname: {type: string, default: "", description: "Tên tài khoản"}
+        limit: {type: integer, default: 5, description: "Số lượng"}
+      required: [screenname]
+
+  - name: social_search
+    description: "Search Twitter/X or other social posts by topic or keyword. Use only when the current intent explicitly mentions social posts, Twitter, X, tweets, or social discussion. Never call for ordinary web news, and stop using it when the user says to leave Twitter or switch to web."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "Từ khóa"}
+        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Cách sắp xếp"}
+        limit: {type: integer, default: 5, description: "Số lượng"}
+      required: [query]
+
+  - name: lookup
+    description: "Search the public web for general information or news. Use topic=news for news/current events and map today to timeframe=day. Do not add social_search unless the current request explicitly also asks for Twitter/X/social discussion."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "Truy vấn"}
+        topic: {type: string, enum: [general, news], default: "general", description: "Phân loại"}
+        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
+        max_results: {type: integer, default: 5, description: "Số kết quả"}
+      required: [query]
+
+  - name: fetch
+    description: "Lấy nội dung từ một địa chỉ."
+    parameters:
+      type: object
+      properties:
+        url: {type: string, default: "", description: "Địa chỉ"}
+      required: [url]
+
+  - name: format
+    description: "Trình bày dữ liệu đã có thành văn bản."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách item"
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              source: {type: string}
+              summary: {type: string}
+              section: {type: string}
+        template: {type: string, enum: [brief, sections, bullets, thread, daily_ai_vn], default: "sections", description: "Khuôn"}
+        headline: {type: string, default: "", description: "Tiêu đề"}
+      required: [items, template]
+
+  - name: source_triage
+    description: "Classify concrete source URLs into research-evidence Tier 1, 2, or 3. Put ALL supplied URLs into one urls array and call this tool exactly once; NEVER split one URL list across multiple calls. Twitter/X/Reddit URLs are inputs to classify, not requests to call timeline or social_search. Use only for source assessment/triage; this tool does not fetch pages or verify claims. If URLs are missing, use clarify instead."
+    parameters:
+      type: object
+      properties:
+        urls:
+          type: array
+          minItems: 1
+          items: {type: string}
+          description: "Concrete source URLs to classify; preserve the user-supplied URLs."
+      required: [urls]
+
+  - name: source_deduplicate
+    description: "Normalize and deduplicate a concrete URL list already supplied by the user. Use only for an explicit request to deduplicate, clean, normalize, or consolidate URLs. Put ALL URLs into one urls array and call exactly once. This tool does not fetch pages, assess credibility, or verify claims; if URLs are missing, use clarify."
+    parameters:
+      type: object
+      properties:
+        urls:
+          type: array
+          minItems: 1
+          items: {type: string}
+          description: "All concrete URLs to normalize and deduplicate."
+      required: [urls]
+
+  - name: freshness_check
+    description: "Audit the freshness or staleness of items whose dates the user already supplied. Use only for explicit freshness, recency, or staleness checks. Preserve ISO YYYY-MM-DD dates, the explicit as_of reference date, and max_age_days threshold. This tool does not search for missing dates or fetch pages."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              date: {type: string, description: "Known publication or update date in ISO YYYY-MM-DD format."}
+            required: [title, date]
+        as_of: {type: string, description: "Reference date in ISO YYYY-MM-DD format. Omit only when the user did not specify one."}
+        max_age_days: {type: integer, minimum: 0, default: 365, description: "Maximum age in days that still counts as fresh."}
+      required: [items]
+
+  - name: claim_coverage
+    description: "Audit which explicitly supplied claims have at least one supplied evidence URL. Use only when the user provides both claims and evidence-to-claim mappings and asks for coverage, unsupported claims, or evidence gaps. Preserve claim IDs, text, URLs, and claim_ids. This tool does not fetch sources, assess credibility, or verify truth."
+    parameters:
+      type: object
+      properties:
+        claims:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              id: {type: string}
+              text: {type: string}
+            required: [id, text]
+        evidence:
+          type: array
+          items:
+            type: object
+            properties:
+              url: {type: string}
+              claim_ids:
+                type: array
+                items: {type: string}
+            required: [url, claim_ids]
+      required: [claims, evidence]
