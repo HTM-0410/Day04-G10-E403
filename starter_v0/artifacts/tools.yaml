@@ -88,3 +88,28 @@ tools:
           items: {type: string}
           description: "Concrete source URLs to classify; preserve the user-supplied URLs."
       required: [urls]
+
+  - name: summarize_text
+    description: "Provides a concise summary of a given block of text. Use this tool when the user explicitly asks to summarize a piece of text. Only use this if the user provides the text to be summarized in their request."
+    parameters:
+      type: object
+      properties:
+        text: {type: string, description: "The raw text to summarize."}
+      required: [text]
+
+  - name: extract_keywords
+    description: "Extracts the most relevant keywords from a given text. Use this tool when the user asks to find the most important topics, entities, or keywords in a piece of text."
+    parameters:
+      type: object
+      properties:
+        text: {type: string, description: "The raw text from which to extract keywords."}
+        max_keywords: {type: integer, default: 5, description: "The maximum number of keywords to return."}
+      required: [text]
+
+  - name: fact_check
+    description: "Verifies if a given factual claim is True, False, or Mixed. Use this tool when the user asks to verify the truthfulness of a statement, or asks if something is a fact."
+    parameters:
+      type: object
+      properties:
+        claim: {type: string, description: "The factual claim to be checked."}
+      required: [claim]

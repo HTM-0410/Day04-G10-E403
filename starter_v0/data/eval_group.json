@@ -34,55 +34,61 @@
       }
     },
     {
-      "id": "G02_single_web_news_args",
+      "id": "G02_single_summarize_text",
       "phase": "B",
-      "query": "Tìm web news cho đúng từ khóa cybersecurity trong tuần này.",
-      "failure_type": "wrong_arg_value",
+      "query": "Tóm tắt đoạn văn bản sau: Công nghệ AI đang phát triển rất nhanh và thay đổi nhiều ngành công nghiệp. Trong tương lai, AI sẽ còn mang lại nhiều giá trị hơn nữa.",
+      "failure_type": "wrong_tool",
       "expect": {
         "tool_calls": [
           {
-            "name": "lookup",
+            "name": "summarize_text",
             "args": {
-              "query": "cybersecurity",
-              "topic": "news",
-              "timeframe": "week"
+              "text": "Công nghệ AI đang phát triển rất nhanh và thay đổi nhiều ngành công nghiệp. Trong tương lai, AI sẽ còn mang lại nhiều giá trị hơn nữa."
             }
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "Maps an explicit web-news keyword and weekly timeframe without adding social search."
+        "what_it_tests": "Routes an explicit summarize request with raw text to the summarize_text tool."
       }
     },
     {
-      "id": "G03_single_missing_url",
+      "id": "G03_single_extract_keywords",
       "phase": "B",
-      "query": "Đọc bài viết này rồi tóm tắt giúp mình.",
-      "failure_type": "missing_info",
+      "query": "Tìm 3 từ khóa quan trọng nhất trong câu này: Machine learning and deep learning are subfields of artificial intelligence.",
+      "failure_type": "wrong_tool",
       "expect": {
         "tool_calls": [
           {
-            "name": "clarify",
+            "name": "extract_keywords",
             "args": {
-              "response_type": "text"
+              "text": "Machine learning and deep learning are subfields of artificial intelligence.",
+              "max_keywords": 3
             }
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "Asks for a missing URL instead of inventing one or calling fetch."
+        "what_it_tests": "Routes an explicit keyword extraction request with text and limit to the extract_keywords tool."
       }
     },
     {
-      "id": "G04_single_no_tool_greeting",
+      "id": "G04_single_fact_check",
       "phase": "B",
-      "query": "Viết một lời chào ngắn bằng tiếng Việt.",
-      "failure_type": "unnecessary_tool",
+      "query": "Kiểm tra xem điều này có đúng không: Nước sôi ở 100 độ C.",
+      "failure_type": "wrong_tool",
       "expect": {
-        "no_tool": true
+        "tool_calls": [
+          {
+            "name": "fact_check",
+            "args": {
+              "claim": "Nước sôi ở 100 độ C."
+            }
+          }
+        ]
       },
       "metadata": {
-        "what_it_tests": "Avoids research tools for a simple writing request outside tool capabilities."
+        "what_it_tests": "Routes a claim verification request to the fact_check tool."
       }
     },
     {

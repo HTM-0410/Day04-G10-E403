@@ -1,0 +1,34 @@
+{
+  "transcript_id": "v3_openrouter_20260729T102636196812",
+  "version": "v3",
+  "artifact_version": "v3+pbdfdc1269b3d+t0079571b6608",
+  "prompt_hash": "bdfdc1269b3dd2fd531f9b36ce7729e3c22f96b5dd7e7d0f6f423e08e543eb50",
+  "tools_hash": "0079571b6608a71e169b9d46e0392683896ec81fbd239d7f997c80ec1e0145a5",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "/Users/phaihoang/Documents/lab-vin/Day04-G10-E403/starter_v0/artifacts/system_prompt.md",
+  "tools": "/Users/phaihoang/Documents/lab-vin/Day04-G10-E403/starter_v0/artifacts/tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-07-29T10:26:36",
+  "updated_at": "2026-07-29T10:38:26",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-07-29T10:26:48",
+      "user": "xin chao",
+      "status": "answered",
+      "assistant_text": "Xin chào! Tôi có thể giúp gì cho bạn hôm nay?",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": "Xin chào! Tôi có thể giúp gì cho bạn hôm nay?",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [],
+      "ended_at": "2026-07-29T10:26:50"
+    }
+  ]
+}

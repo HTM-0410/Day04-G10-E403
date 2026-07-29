@@ -18,6 +18,9 @@ from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .source_triage.tool import triage_sources
 from .lookup.tool import web_search
+from .summarize_text.tool import summarize
+from .extract_keywords.tool import extract
+from .fact_check.tool import check_claim
 
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
@@ -37,6 +40,9 @@ TOOL_FUNCTIONS = {
     "policy": search_company_policy,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
+    "summarize_text": summarize,
+    "extract_keywords": extract,
+    "fact_check": check_claim,
 }
 
 

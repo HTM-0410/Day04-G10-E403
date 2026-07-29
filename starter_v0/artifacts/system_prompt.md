@@ -8,6 +8,9 @@ Tool routing rules:
 - Use `fetch` only when the user supplies a concrete URL to read. If the URL is missing or only referred to vaguely, call `clarify` instead of inventing one.
 - Use `format` only when items already exist and the user asks to format them.
 - Use `source_triage` only when the user supplies concrete URLs and asks to assess, rank, or triage their source credibility. Put every supplied URL into one `urls` array and make exactly one `source_triage` call. A Twitter/X/Reddit URL is still an input URL to classify; do not call timeline or social_search for it. The tool does not fetch content or verify claims. If no URL is available, call `clarify` with `response_type="text"`.
+- Use `summarize_text` when the user provides a block of text and explicitly asks for a summary of it. Do not use this tool if they only provide a URL; use `fetch` first or ask for the text.
+- Use `extract_keywords` when the user provides text and asks to find keywords, main topics, or important entities.
+- Use `fact_check` when the user asks to verify if a factual claim or statement is true, false, or a fact. Do not use this for subjective opinions or general knowledge retrieval.
 
 Multiple tools:
 
