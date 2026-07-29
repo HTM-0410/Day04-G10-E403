@@ -1,20 +1,20 @@
 {
-  "run_id": "v3_B_group_openrouter_20260729T100910980674",
+  "run_id": "v3_B_group_openrouter_20260729T113723393481",
   "version": "v3",
-  "artifact_version": "v3+peda5489631c2+tcad78b53d623",
-  "prompt_hash": "eda5489631c226b8a2899788937a399763c40166c54f272ce225e4017547023e",
-  "tools_hash": "cad78b53d623a7db6827103867b11d959a4bdd25bf7e44c45e7122dbdf36be67",
+  "artifact_version": "v3+p1d926c01f3ea+t5e20d98d5631",
+  "prompt_hash": "1d926c01f3eafdef8197863df33c700ba1b06ff5799426efe65b63cc4d834f35",
+  "tools_hash": "5e20d98d5631faf8358b22569674a2e7fee6bb9078c916992ddad2846a875970",
   "phase": "B",
   "suite": "group",
   "provider": "openrouter",
   "model": "openai/gpt-4o-mini",
-  "system_prompt": "D:\\AI thực chiến\\Day04-2A20262004-TruongMinhHoang\\starter_v0\\artifacts\\system_prompt.md",
-  "tools": "D:\\AI thực chiến\\Day04-2A20262004-TruongMinhHoang\\starter_v0\\artifacts\\tools.yaml",
+  "system_prompt": "C:\\Users\\pc\\Documents\\AIThucChien\\LabDay04\\Day04-G10-E403\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "C:\\Users\\pc\\Documents\\AIThucChien\\LabDay04\\Day04-G10-E403\\starter_v0\\artifacts\\tools.yaml",
   "eval_cases": "data\\eval_group.json",
   "dataset_id": "day04_v2_truongminhhoang_group",
   "dataset_role": "group",
   "description": "Ten original team-authored cases: five single-turn and five multi-turn cases covering source triage, routing, arguments, missing information, action boundaries, and no-tool behavior.",
-  "generated_at": "2026-07-29T10:09:10",
+  "generated_at": "2026-07-29T11:37:23",
   "summary": {
     "total_cases": 10,
     "measured_cases": 10,
@@ -70,9 +70,11 @@
             }
           },
           {
-            "name": "timeline",
+            "name": "source_triage",
             "args": {
-              "screenname": "example"
+              "urls": [
+                "https://x.com/example/status/1"
+              ]
             }
           }
         ],
@@ -82,7 +84,7 @@
         "failure_type": "wrong_tool",
         "failures": [
           "urls: expected ['https://www.who.int/news', 'https://x.com/example/status/1'], got ['https://www.who.int/news']",
-          "extra tool call timeline"
+          "extra tool call source_triage"
         ]
       },
       "tool_results": [
@@ -115,75 +117,31 @@
           }
         },
         {
-          "tool": "timeline",
+          "tool": "source_triage",
           "args": {
-            "screenname": "example"
+            "urls": [
+              "https://x.com/example/status/1"
+            ]
           },
           "result": {
-            "tool": "get_user_tweets",
-            "screenname": "example",
+            "tool": "source_triage",
+            "error": null,
+            "message": null,
             "items": [
               {
-                "title": "Vibe Chemistry x Local x Elro X Window Kid x Example",
-                "summary": "Vibe Chemistry x Local x Elro X Window Kid x Example\n\n‘RUNNY EGG’\n\nOUT AT MIDNIGHT. Everywhere … 🍳 https://t.co/rtBHL7w8pC",
-                "url": "https://x.com/example/status/1824146406040539301",
-                "source": "@example",
-                "date": "Thu Aug 15 18:09:28 +0000 2024",
-                "metrics": {
-                  "favorites": 44,
-                  "retweets": 5,
-                  "views": "46005"
-                }
-              },
-              {
-                "title": "RT @example: ‘Skyscanner’ - new one from me &amp; @BeyondChicago1 - OUT NOW",
-                "summary": "RT @example: ‘Skyscanner’ - new one from me &amp; @BeyondChicago1 - OUT NOW\n\nhttps://t.co/J56RHJkryd https://t.co/KO9WG8CIlo",
-                "url": "https://x.com/example/status/1819422918192853128",
-                "source": "@example",
-                "date": "Fri Aug 02 17:20:01 +0000 2024",
-                "metrics": {
-                  "favorites": 0,
-                  "retweets": 23,
-                  "views": "1"
-                }
-              },
-              {
-                "title": "‘Skyscanner’ - new one from me &amp; @BeyondChicago1 - OUT NOW",
-                "summary": "‘Skyscanner’ - new one from me &amp; @BeyondChicago1 - OUT NOW\n\nhttps://t.co/J56RHJkryd https://t.co/KO9WG8CIlo",
-                "url": "https://x.com/example/status/1819287109712146478",
-                "source": "@example",
-                "date": "Fri Aug 02 08:20:22 +0000 2024",
-                "metrics": {
-                  "favorites": 83,
-                  "retweets": 23,
-                  "views": "113881"
-                }
-              },
-              {
-                "title": "Thanks to everyone supporting my new banger … if you haven’t heard it yet 👀👀👀",
-                "summary": "Thanks to everyone supporting my new banger … if you haven’t heard it yet 👀👀👀",
-                "url": "https://x.com/example/status/1769331506034643168",
-                "source": "@example",
-                "date": "Sun Mar 17 11:54:38 +0000 2024",
-                "metrics": {
-                  "favorites": 64,
-                  "retweets": 5,
-                  "views": "65398"
-                }
-              },
-              {
-                "title": "RT @example: ‘RUN’ is out now on all platforms, everywhere. So go run up the streams or run up a hill. Thank you. El. ",
-                "summary": "RT @example: ‘RUN’ is out now on all platforms, everywhere. So go run up the streams or run up a hill. Thank you. El. \n\nhttps://t.co/xEP4Oz…",
-                "url": "https://x.com/example/status/1768953962613600640",
-                "source": "@example",
-                "date": "Sat Mar 16 10:54:24 +0000 2024",
-                "metrics": {
-                  "favorites": 0,
-                  "retweets": 23,
-                  "views": null
-                }
+                "url": "https://x.com/example/status/1",
+                "host": "x.com",
+                "tier": 3,
+                "category": "social_or_community_signal",
+                "recommendation": "Treat as a signal; verify with Tier 1 or Tier 2 evidence."
               }
-            ]
+            ],
+            "tier_counts": {
+              "1": 0,
+              "2": 0,
+              "3": 1
+            },
+            "item_count": 1
           }
         }
       ]
@@ -245,39 +203,39 @@
             "timeframe": "week",
             "items": [
               {
-                "title": "AI can’t fix cybersecurity’s hiring problem - Help Net Security",
-                "url": "https://www.helpnetsecurity.com/2026/07/22/cybersecurity-workforce-trends-report/",
-                "source": "helpnetsecurity.com",
-                "summary": "**Help Net Security newsletters**: Daily and weekly news, cybersecurity jobs, open source projects, breaking news – **subscribe here!**. Organizations are redefining cybersecurity roles through workforce frameworks and placing greater emphasis on verified skills as AI and new regulatory requirements change hiring. The SANS 2026 Cybersecurity Workforce Survey found demand for specialists in new roles more than doubled over the past year, alongside increased hiring for existing cybersecurity skills. AI is reducing manual analysis, automating routine tasks and creating demand for security roles focused on AI governance, engineering and risk. 54% of respondents said they have AI security policies, and only 38% provide comprehensive AI security training. Employers are adding AI-focused cybersecurity roles, including AI security engineers, AI governance analysts and AI/ML security specialists, while experienced cybersecurity professionals remain the hardest positions to fill. Companies are adopting workforce frameworks such as NICE and the European Cybersecurity Skills Framework to standardize cybersecurity roles and skills. Experienced cybersecurity professionals remain the hardest roles to recruit.",
-                "score": 0.43237552
+                "title": "How to create better cybersecurity conversations with the board",
+                "url": "https://www.weforum.org/stories/cybersecurity/how-to-create-better-cybersecurity-conversations-with-the-board",
+                "source": "weforum.org",
+                "summary": "For a cybersecurity company, context matters. We are part of our customers' supply chains. We hold sensitive threat intelligence. Our source code is strategic intellectual property. Most importantly, our customers trust us to help protect their businesses.\n\nA successful attack against a cybersecurity company could, therefore, affect not only the organization itself but confidence across the wider ecosystem. [...] Unlike maturity, which evolves steadily over time, the cyber security risks that deserve the board's attention change continuously. New technologies, new attack techniques and changes in the business constantly reshape where management and the board should focus. [...] I recently presented the cyber security status to our board. The discussion that followed confirmed that the approach had achieved what I hoped: it enabled a productive conversation about the risks that mattered most and where the board could add value.",
+                "score": 0.52510154
               },
               {
-                "title": "Microsoft launches its first cybersecurity model, plus a new agentic cybersecurity system - TechCrunch",
-                "url": "https://techcrunch.com/2026/07/27/microsoft-launches-its-first-cyber-model-and-a-new-agentic-cybersecurity-system/",
-                "source": "techcrunch.com",
-                "summary": "# Microsoft launches its first cybersecurity model, plus a new agentic cybersecurity system. Microsoft on Monday launched its first cybersecurity-specialized model alongside a new AI cybersecurity platform at a small event in San Francisco, taking a big swipe at major players in the space — namely Anthropic, Google and OpenAI. The company describes MAI-Cyber-1-Flash as a model that’s built “to find challenging vulnerabilities in complex codebases.” The model is built to animate MDASH, Microsoft’s harness dedicated to software vulnerability identification and remediation. The new security platform is dubbed Perception, and it’s designed to deploy teams of agents to assist with and automate various security workflows, including identifying and remediating bugs. Noting that hackers are increasingly using AI in their cyberattacks, Hayete Gallot, Microsoft’s vice president for security, described Perception as a way for enterprise defenders to “defend against AI with AI at the scale and speed that the attackers have.”. AI, AI, cybersecurity, Microsoft, Security.",
-                "score": 0.43136916
+                "title": "Microsoft touts cost-saving AI model for cybersecurity",
+                "url": "https://www.cnbc.com/2026/07/27/microsoft-touts-cost-saving-ai-model-for-cybersecurity.html",
+                "source": "cnbc.com",
+                "summary": "Cybersecurity executives \"look at this as maybe a way to lower the bar and be able to bring in more talent to actually staff the SOCs and and get more people to participate because right now it's very limited in the industry,\" Gallot told CNBC. Companies maintain security operating centers (SOCs) full of people who look out for threats to information-technology systems. [...] \"By combining specialized models and data with the right agents, tools, security context, and harness, we can advance the frontier of cost to outcome,\" Nadella wrote in a Monday X post.\n\nMicrosoft hasn't disclosed the scale of its cybersecurity business since 2023, when it said annual revenue exceeded $20 billion. [...] It's Microsoft's first major cybersecurity push since a leadership shake-up in February.",
+                "score": 0.44478238
               },
               {
-                "title": "New Report Outlines Priorities for a Cybersecure, American-Made Solar & Storage Industry - CleanTechnica",
-                "url": "https://cleantechnica.com/2026/07/22/new-report-outlines-priorities-for-a-cybersecure-american-made-solar-storage-industry/",
-                "source": "cleantechnica.com",
-                "summary": "— The Solar Energy Industries Association (SEIA) today released a new report outlining the industry’s priorities for strengthening cybersecurity while expanding domestic manufacturing of solar and energy storage technology. As cyber threats targeting the energy sector and across the economy continue to evolve, SEIA is working with industry and government partners to ensure that solar and storage systems and components are secure and supported by resilient domestic supply chains. The report outlines key cybersecurity considerations for the solar and storage industry, recommends actions to strengthen industry resilience, and provides resources for companies to implement cybersecurity best practices and standards. “As solar and storage continue to lead the way in adding new power capacity to the grid, cybersecurity must remain front and center,” **said SEIA president and CEO Tim Pawlenty.** “From secure and resilient systems to expanding domestic manufacturing, this report lays out the actions our industry is taking to strengthen U.S. energy security, protect critical infrastructure, and stay ahead of emerging threats.”. **The report recommends key priorities for strengthening the cybersecurity of the solar and storage industry:**.",
-                "score": 0.38172707
+                "title": "Companies fear AI risks more than common cybersecurity threats",
+                "url": "https://www.cybersecuritydive.com/news/ai-cybersecurity-threats-business-fears/826352",
+                "source": "cybersecuritydive.com",
+                "summary": "Notably, the cybersecurity incidents that surveyed businesses experienced were not blips on the radar. Nearly half of victimized businesses said they experienced at least two weeks of lost productivity, and roughly one in 10 victims experienced at least two quarters of disruptions. [...] Arctic Wolf’s report also contained a potentially paradoxical finding. Sixty-three percent of organizations said they had experienced at least one cybersecurity incident in the past 12 months, compared with 29% who said they were confident they had not experienced an incident. At the same time, 53% of surveyed business leaders said they were highly confident in their security teams’ ability to keep up with the threat landscape, and 43% were somewhat confident, bringing the total confidence [...] Some CISA staffers have been pushed out, while others are being told to move across the country for jobs outside their skill sets.\n\n### Get the free newsletter\n\nSubscribe to Cybersecurity Dive for top news, trends & analysis\n\n### Take your knowledge further with\n\nSign up for the free  newsletter.\n\nInterested? Explore more of what  has to offer.\n\n### You're all set",
+                "score": 0.4436251
               },
               {
-                "title": "CISOs vs. Boards: Myth or Misunderstanding? - Dark Reading",
-                "url": "https://www.darkreading.com/cybersecurity-operations/cisos-vs-boards-myth-or-misunderstanding-",
-                "source": "darkreading.com",
-                "summary": "Cybersecurity In-Depth: Feature articles on security strategy, latest trends, and people to know. Escalating threats are forcing boards to prioritize security, but communication gaps persist. Boards and security teams each say they need more support to bridge the divide. But attacks affect business operations, an organization's reputation, and can result in legal implications which require everyone to get on the same page. More companies are recognizing this, as the threat landscape intensifies and leadership is working to break down the stereotype that boards don't care about security. \"In reality, strong directors care deeply; not only about cyber risks but about the business's people, its mission, and about what's going on 360 degrees outside of the organizations,\" Conway tells Dark Reading. Whether it’s a myth that board members do not care about or prioritize security is complicated, and that has changed over the years, as cybersecurity comes more into focus.",
-                "score": 0.3775871
+                "title": "Defense Department Suspends New Cybersecurity Rules After $7 Billion Cost Concerns",
+                "url": "https://www.military.com/defense-department-suspends-new-cybersecurity-rules-after-7-billion-cost-concerns",
+                "source": "military.com",
+                "summary": "Flock AI Camera\n\n##### Flock's Surveillance Cameras Face Another Blow as LAPD Won't Renew The Contract\n\n9700464\n\nSecretary of War Pete Hegseth hosts a prayer service at the Pentagon, Washington, D.C., May 20, 2026.\n\nThe Department of Defense (DOD) has announced a change in its cybersecurity strategy, suspending a phase of a pre-existing plan to strengthen cybersecurity compliance over concerns about the cost and bureaucracy involved in implementing it. [...] Other government departments have recently made cuts to cybersecurity programs. Units tracking cyber threats in the ODNI were cut in August 2025 as part of plans to cut staff at the agency by almost 50%. Among the cuts were units that track cyber threats.\n\nThe department will now conduct a review of its certification programs, it said, and will recommend new measures within 60 days. [...] She added that over 100,000 defense firms still needed to complete a third-party cybersecurity assessment to comply with the requirements but that just over 100 assessors were available to conduct those audits.\n\nIn a release, she added: \"Robust cybersecurity and operational resilience remain critical to protecting American innovation and supporting warfighter readiness. We believe the DIB can achieve both, while we reduce unnecessary government red tape.\"",
+                "score": 0.44275752
               },
               {
-                "title": "Industrial firms can see cyber threats. Acting on them is another matter. - AOL.com",
-                "url": "https://www.aol.com/articles/industrial-firms-see-cyber-threats-153510000.html",
-                "source": "aol.com",
-                "summary": "Industrial firms are investing more in cybersecurity than ever before, yet breaches continue to rise. Nearly 9 in 10 increased their OT security budgets by more than 10% last year, according to TXOne Networks' global survey of industrial security leaders. Yet 60% of organizations still suffered a breach in 2025, and the European Union Agency for Cybersecurity reports that OT-related incidents now account for a substantial share of total cyber activity. Companies are spotting threats faster, but they are still getting hit, suggesting the issue is no longer one of visibility but of execution. These systems flag hundreds of issues as critical without distinguishing between a low-impact workstation and a controller tied to a safety system, creating noise rather than clarity. The number of companies with large OT security teams has increased significantly, reflecting a growing recognition that industrial cybersecurity cannot be run as a side project by the IT department.",
-                "score": 0.37284824
+                "title": "Rethinking security for the age of AI - The Official Microsoft Blog",
+                "url": "https://blogs.microsoft.com/blog/2026/07/27/rethinking-security-for-the-age-of-ai",
+                "source": "blogs.microsoft.com",
+                "summary": "The physics of cybersecurity are changing. Autonomous systems can now reason, adapt and operate continuously. At the same time, the cost of offense is falling, while the volume, velocity and complexity of what must be secured continues to grow. Attackers can generate exploits faster, scale campaigns further and operate with unprecedented efficiency. The approaches built for a world of human actors cannot keep pace with a world of AI, agents and machine-speed attacks.",
+                "score": 0.42477044
               }
             ]
           }
@@ -312,7 +270,7 @@
           {
             "name": "clarify",
             "args": {
-              "question": "Bạn có thể cung cấp URL của bài viết mà bạn muốn tôi đọc và tóm tắt không?",
+              "question": "Vui lòng cung cấp URL của bài viết mà bạn muốn tóm tắt.",
               "response_type": "text"
             }
           }
@@ -327,12 +285,12 @@
         {
           "tool": "clarify",
           "args": {
-            "question": "Bạn có thể cung cấp URL của bài viết mà bạn muốn tôi đọc và tóm tắt không?",
+            "question": "Vui lòng cung cấp URL của bài viết mà bạn muốn tóm tắt.",
             "response_type": "text"
           },
           "result": {
             "tool": "ask_user",
-            "question": "Bạn có thể cung cấp URL của bài viết mà bạn muốn tôi đọc và tóm tắt không?",
+            "question": "Vui lòng cung cấp URL của bài viết mà bạn muốn tóm tắt.",
             "response_type": "text",
             "options": [],
             "awaiting_user": true
@@ -358,7 +316,7 @@
         "routing_correct": true,
         "args_correct": true,
         "actual_tool_calls": [],
-        "actual_text": "Chào bạn! Hy vọng bạn có một ngày tuyệt vời!",
+        "actual_text": "Xin chào! Chúc bạn một ngày tuyệt vời!",
         "case_failure_type": "unnecessary_tool",
         "observed_mismatch": null,
         "failure_type": null,
@@ -430,7 +388,7 @@
                 "metrics": {
                   "favorites": 5171,
                   "retweets": 600,
-                  "views": "1265010"
+                  "views": "1265327"
                 }
               },
               {
@@ -442,19 +400,19 @@
                 "metrics": {
                   "favorites": 207,
                   "retweets": 28,
-                  "views": "105604"
+                  "views": "105682"
                 }
               },
               {
-                "title": "🚨Microsoft just turned Copilot into a digital coworker.",
-                "summary": "🚨Microsoft just turned Copilot into a digital coworker.\nNot using this in 2026 = falling behind.\n\nThe latest update in Microsoft 365 Copilot isn’t just an upgrade.\n\nIt’s a complete shift from AI tools → AI teammates.\n\nHere’s everything you need to know 👇\n\n🔹 1. Microsoft Copilot Cowork (Biggest Update)\n\nAI now works like a real teammate:\n\n* Plans projects\n* Reviews budgets\n* Manages calendar + tasks\n* Executes workflows end-to-end\n\n👉 This is Agentic AI (AI that acts, not just responds)\n\n🔹 2. Enterprise-Ready AI (Built-in)\n\n* Data security\n* Permissions\n* Compliance\n\n👉 Respects company data boundaries (no leaks)\n\n🔹 3. Multi-Model AI (GPT + Claude)\n\n* One AI writes\n* Another critiques\n* Compare answers side-by-side\n\nResult:\n✔ Higher accuracy\n✔ Fewer hallucinations\n✔ Better decisions\n\n🔹 4. AI Agents Across Office Apps\n\nWorks inside: Excel • Word • PowerPoint • Outlook\n\nCapabilities:\n* Create documents\n* Analyze data\n* Build presentations\n* Draft emails\n* Answer questions like a human\n\n👉 Enables human + AI collaboration workflows\n\n🔹 5. Agent Mode + Automation\n\nAI interacts with apps, websites, and systems\n\nAutomates repetitive work:\n* Data entry\n* Reporting\n* Workflow approvals\n\n👉 Microsoft calls this Agent Mode / Agentic Enterprise\n\n🔹 6. Advanced Research AI\n\nDeep research engine that:\n* Analyzes multiple sources\n* Cross-checks insights\n\nGreat for:\n* Strategy docs\n* Market research\n* Reports\n\n🔹 7. Copilot App Improvements\n\n* Better UI + navigation\n* Chat history + search\n* Central AI content library\n\n👉 Becomes your AI workspace\n\n🔹 8. Copilot Studio (Build Your Own AI)\n\nCreate custom AI assistants (no coding):\n\nUse cases:\n* HR bots\n* Customer support\n* Internal knowledge assistants\n\n👉 Fully customizable AI workflows\n\n🔹 9. Smarter Features in Daily Apps\n\nIn Excel:\n* Create tables from images\n* Instant data analysis\n\nIn Word:\n* Convert handwritten notes\n* Draft documents with AI\n\nIn PowerPoint:\n* Auto-generate slides & designs\n\nIn Outlook:\n* Email drafting + prioritization\n\n👉 Saves hours of manual work daily\n\n🔹 10. The Big Shift (2026)\n\nMicrosoft 365 is moving from:\n❌ “AI that answers”\n✅ “AI that does work for you”\n\nThis is called:\n👉 Agentic AI + AI Coworkers\n\n🔹 Simple Summary\n\nCopilot is no longer just a chatbot.\n\nIt’s becoming:\n* A researcher\n* A task executor\n* A workflow manager\n* A team member\n\nClosing (punchline):\nAI doesn’t fail at intelligence.\nIt fails at execution.\n\nMicrosoft just fixed that.\n\nIf you're building or using AI in 2026, you need to understand this shift.\n\n𝗕𝗲𝗰𝗼𝗺𝗲 𝗯𝗲𝘁𝘁𝗲𝗿 𝗮𝘁 𝗔𝗜 𝗶𝗻 𝗷𝘂𝘀𝘁 𝟭 𝗺𝗶𝗻𝘂𝘁𝗲 𝗮 𝗱𝗮𝘆. 𝗝𝗼𝗶𝗻 𝗺𝘆 𝘄𝗲𝗲𝗸𝗹𝘆 𝗻𝗲𝘄𝘀𝗹𝗲𝘁𝘁𝗲𝗿 𝘄𝗵𝗲𝗿𝗲 𝗜 𝗱𝗼𝗰𝘂𝗺𝗲𝗻𝘁 𝘁𝗵𝗲 𝗿𝗲𝗮𝗹-𝘄𝗼𝗿𝗹𝗱 𝗷𝗼𝘂𝗿𝗻𝗲𝘆 𝗼𝗳 𝗔𝗜 𝘁𝗿𝗮𝗻𝘀𝗳𝗼𝗿𝗺𝗮𝘁𝗶𝗼𝗻. \n👉 𝗦𝗶𝗴𝗻 𝘂𝗽 𝗳𝗿𝗲𝗲 now → https://t.co/Kj8zW95H9X\n\nFollow @AiswaryaVenkit1 for more such insights!!",
-                "url": "https://x.com/AiswaryaVenkit1/status/2078819645038141939",
-                "source": "@AiswaryaVenkit1",
-                "date": "Sun Jul 19 12:30:00 +0000 2026",
+                "title": "A 17-year-old student replaced $850 in monthly AI bills with 1 tiny NVIDIA box and never looked at cloud invoices the sa",
+                "summary": "A 17-year-old student replaced $850 in monthly AI bills with 1 tiny NVIDIA box and never looked at cloud invoices the same way again.\n\nThe machine cost $4,699.\n\nThat sounded expensive until the math started winning.\n\nCloud GPUs charge every experiment.\nEvery failed prompt.\nEvery forgotten instance.\nEvery late-night demo.\n\nA local AI box flips the model.\n\nPrivate documents stay on your desk.\nCoding agents run without API anxiety.\nRAG, embeddings and model testing stop burning money by the hour.\n\nOne $3K to $10K client project can cover most of the hardware.\n\nAfter that, every new workflow becomes cheaper to build.\n\nThe next AI advantage isn’t finding a better model.\n\nIt’s owning the computer that runs it.",
+                "url": "https://x.com/Lummox_eth/status/2078454851038548258",
+                "source": "@Lummox_eth",
+                "date": "Sat Jul 18 12:20:26 +0000 2026",
                 "metrics": {
-                  "favorites": 66,
-                  "retweets": 11,
-                  "views": "18680"
+                  "favorites": 323,
+                  "retweets": 23,
+                  "views": "328530"
                 }
               }
             ]
@@ -659,9 +617,9 @@
                 "source": "@karpathy",
                 "date": "Tue Jul 21 16:53:55 +0000 2026",
                 "metrics": {
-                  "favorites": 48635,
+                  "favorites": 48637,
                   "retweets": 4061,
-                  "views": "3896559"
+                  "views": "3897588"
                 }
               },
               {
@@ -722,7 +680,7 @@
           {
             "name": "clarify",
             "args": {
-              "question": "Bạn có xác nhận muốn gửi bản nháp: \"Báo cáo AI tuần này đã sẵn sàng\" lên Telegram không?",
+              "question": "Bạn có chắc chắn muốn gửi bản nháp lên Telegram không?",
               "response_type": "yes_no"
             }
           }
@@ -737,12 +695,12 @@
         {
           "tool": "clarify",
           "args": {
-            "question": "Bạn có xác nhận muốn gửi bản nháp: \"Báo cáo AI tuần này đã sẵn sàng\" lên Telegram không?",
+            "question": "Bạn có chắc chắn muốn gửi bản nháp lên Telegram không?",
             "response_type": "yes_no"
           },
           "result": {
             "tool": "ask_user",
-            "question": "Bạn có xác nhận muốn gửi bản nháp: \"Báo cáo AI tuần này đã sẵn sàng\" lên Telegram không?",
+            "question": "Bạn có chắc chắn muốn gửi bản nháp lên Telegram không?",
             "response_type": "yes_no",
             "options": [],
             "awaiting_user": true
@@ -823,32 +781,32 @@
             "timeframe": "month",
             "items": [
               {
-                "title": "Beyond Lithium: New Battery Tech Starts to Break Through",
-                "url": "https://e360.yale.edu/features/energy-storage-sodium-solid-state",
-                "source": "e360.yale.edu",
-                "summary": "Making a battery is fundamentally simple: A child can create one out of a lemon, a galvanized nail, a copper penny, and a couple of wires. Chemical reactions occur between the two electrodes — the cathode and the anode — and the lemon-juice electrolyte that’s sandwiched in between them, driving electrons through the wires to light up a bulb.\n\n### NEVER MISS AN ARTICLE\n\nSubscribe to the E360 Newsletter for weekly updates delivered to your inbox. Sign Up. [...] But making a really good battery — one that packs a lot of power into a small package, is cheap to manufacture, survives through a decade of charging cycles without degrading or starting fires, works in the cold of winter and the heat of summer, and can be easily refurbished or recycled — is another thing entirely. Creating good batteries is such a delicate work of chemistry and engineering that it typically requires decades of research to get it right. “It’s like a symphony. Everything needs [...] A decade ago, most EV batteries were nickel manganese cobalt (NMC) variants (named after the primary ingredients in their positive electrode, the cathode), which boast a relatively high energy density. Recently, though, these have been overtaken by cheaper lithium iron phosphate (LFP) batteries, named after their own cathode, which are catching up in performance and contain fewer critical metals than NMCs — expensive ingredients with limited supply chains.",
-                "score": 0.47489962
+                "title": "Batteries Plus continues growing footprint in first half of 2026 - Chain Store Age",
+                "url": "https://chainstoreage.com/batteries-plus-continues-growing-footprint-first-half-2026",
+                "source": "chainstoreage.com",
+                "summary": "Batteries Plus is expanding its footprint nationwide. Batteries Plus is continuing its momentum when it comes to opening new stores and adding units to its development pipeline. The  specialty battery and power solutions retailer has signed 15 franchise agreements covering 30 units and opened 12 new stores in the first six months of the year. In the first quarter, Batteries Plus sold 14 new units to seven new franchise owners, expanding its footprint across Texas, Florida, Minnesota, California, Georgia and Illinois. In 2025, Batteries Plus signed 24 franchise deals totaling 63 new units, and opened 30 new locations across 13 states. In addition to expanding its store count, Batteries Plus says it is also developing and investing in technology designed to strengthen the owner experience. \"We are investing in this brand the same way our owners are betting on it,\" said Joe Malmuth, chief development officer of Batteries Plus. A rapidly growing specialty battery retailer is debuting a refreshed homepage for its e-commerce site.",
+                "score": 0.3380339
               },
               {
-                "title": "Innovative Technology Developed at Rutgers Could Make Lithium-Ion Batteries Safer | Rutgers University",
-                "url": "https://www.rutgers.edu/news/innovative-technology-developed-rutgers-could-make-lithium-ion-batteries-safer",
-                "source": "rutgers.edu",
-                "summary": "The U.S. Department of Energy’s website explains that batteries feature two electrical terminals, the cathode (positive side) and the anode (negative side), and in between them is a chemical material called an electrolyte, through which ions (electrically charged atoms) flow. According to Amatucci, the electrons that emerge from each electrode move to the current collectors, which then deliver the energy as power to the connected devices. [...] “Batteries include a battery monitoring system, or BMS, that looks at the temperature of the battery, how much charge it has, and its history, and is smart enough to shut it off if it's not behaving well,” Amatucci said. “Our technology provides batteries with an extra level of safety.”",
-                "score": 0.47329262
+                "title": "The biggest problem with solid-state batteries may finally be solved - ScienceDaily",
+                "url": "https://www.sciencedaily.com/releases/2026/07/260710003533.htm",
+                "source": "sciencedaily.com",
+                "summary": "## Scientists uncovered why solid-state batteries fail, bringing the next generation of longer-lasting, safer batteries a step closer to reality. :   Researchers solved the mystery of how soft lithium dendrites crack the hard ceramic inside solid-state batteries, triggering short circuits. One of the most promising technologies is the solid-state battery, which could allow smartphones to operate for several days on a single charge and give electric vehicles driving ranges up to three times greater than many current models. Unlike conventional lithium-ion batteries, which use a liquid electrolyte between two solid electrodes, solid-state batteries replace the liquid with a solid electrolyte. **How Dendrites Crack Solid-State Batteries**. \"Although the electrodes and the forming dendrites consist of lithium metal, which is soft like a gummy bear, the dendrites are able to penetrate the ceramic electrolyte and lead to a short circuit,\" says Dr. Yuwei Zhang, first author of the new publication and head of the group \"Chemo-Mechanics of Battery Materials\" at MPI-SusMat.",
+                "score": 0.28275582
               },
               {
-                "title": "Discovery helps explain why solid-state batteries often fail",
-                "url": "https://news.mit.edu/2026/discovery-helps-explain-why-solid-state-batteries-often-fail-0706",
-                "source": "news.mit.edu",
-                "summary": "“For the last 30 years, the world has been dominated by lithium-ion batteries, but there is a growing recognition that other battery types are needed for batteries used in a variety of uses,” Rupp explains. “This work gives us the fundamental understanding of the space charge interface at the grain boundary. If understood properly, we can come up with engineering concepts to increase cycle life, transference of ions over electrons at these interfaces, and ultimately a better battery.” [...] Next generation batteries that use new electrolyte materials could achieve far higher energy density than today’s lithium-ion batteries, without many of the safety concerns. But advanced batteries, such as those that use solid or almost-solid electrolytes, have been plagued by the formation of tiny spikes of lithium metal called dendrites that cause the batteries to lose efficiency and fail. [...] adjusting how the electrolyte is processed enhances the movement of ions while reducing electron leakage. This adjustment can increase critical current density by more than 300 percent, which could enable solid-state batteries that charge faster and last longer.",
-                "score": 0.36385083
+                "title": "New sodium metal battery design charges in just 4 minutes and retains its capacity for years - Live Science",
+                "url": "https://www.livescience.com/technology/engineering/new-sodium-metal-battery-design-charges-in-just-4-minutes-and-retains-its-capacity-for-years",
+                "source": "livescience.com",
+                "summary": "Get more from Live Science. Choose your Live Science experience. Get started to get free access to selected news stories, receive our daily newsletter, post comments, play games and earn badges. Go beyond the headlines with Live Science Pro. Rigorously fact-checked science, expert commentary and an ad-free experience built for those who want to go beyond the headlines. SMBs also differ from sodium-ion (Na-ion) batteries in that they use a metallic sodium anode rather than a graphite or hard carbon anode. When charge runs through a Li-ion, Na-ion, or sodium metal battery, the anode always reacts with the electrolyte to form an oxide layer known as the SEI. Because SMBs use a sodium anode, rather Na-ion batteries that use graphite or hard carbon anode, they are lighter and cheaper to produce and therefore much more comparable to Li-ion in terms of size and weight.",
+                "score": 0.2652833
               },
               {
-                "title": "Single-phase gradient-solvation-electrolyte-stabilized Li metal batteries | Nature",
-                "url": "https://www.nature.com/articles/s41586-026-10732-z",
+                "title": "Electrostatic regulation of solvation chemistry enables ampere-hour-scale high-energy lithium metal batteries - Nature",
+                "url": "https://www.nature.com/articles/s41565-026-02212-2",
                 "source": "nature.com",
-                "summary": "TFMBN, the electrolyte degradation on the positive electrode surface is suppressed, the positive electrode interface structure and interphase composition are well preserved, enabling superior electrolyte retention and sustaining the compact Li morphology throughout long-term cycling. [...] Center of Energy Storage Materials & Technology, College of Engineering and Applied Sciences, Jiangsu Key Laboratory of Artificial Functional Materials, Nanjing University, Nanjing, People’s Republic of China\n\nWujie Yang \n(杨伍桀), Aoyuan Chen \n(陈奥渊), Ping He \n(何平) & Haoshen Zhou \n(周豪慎)\n\nCollege of Materials Science and Engineering, Hunan University, Changsha, People’s Republic of China\n\nJianfeng Cai \n(蔡键锋)\n\nCollege of Chemistry, Zhengzhou University, Zhengzhou, People’s Republic of China [...] energy density of 605 Wh kg−1, which achieves 150 cycles with 96% capacity retention. This gradient solvation strategy provides a feasible pathway of electrolyte engineering for metal-ion batteries.",
-                "score": 0.30194885
+                "summary": "We also use optional cookies for advertising, personalisation of content, usage analysis, and social media, as well as to allow video information to be shared for both marketing, analytics and editorial purposes. By accepting optional cookies, you consent to the processing of your personal data - including transfers to third parties. Some third parties are outside of the European Economic Area, with varying standards of data protection. See our privacy policy for more information on the use of your personal data. Manage preferences for further information and to change your choices. # Electrostatic regulation of solvation chemistry enables ampere-hour-scale high-energy lithium metal batteries. Using the MEE design in a 6-Ah Li ‖ LiNi 0.8 Co 0.1 Mn 0.1 O 2 pouch cell results in an initial specific energy of 508 Wh kg−1 (based on the cell’s total mass) at 21 mA g−1 (based on the cell’s cathode mass), with 93% energy retention after 149 cycles at 42 mA g−1.",
+                "score": 0.24779212
               }
             ]
           }

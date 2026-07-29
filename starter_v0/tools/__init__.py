@@ -17,6 +17,7 @@ from .policy.tool import search_company_policy
 from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .source_triage.tool import triage_sources
+from .source_compare.tool import compare_sources
 from .lookup.tool import web_search
 
 
@@ -34,6 +35,7 @@ TOOL_FUNCTIONS = {
     "format": render_digest,
     "send": send_telegram,
     "source_triage": triage_sources,
+    "source_compare": compare_sources,
     "policy": search_company_policy,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,

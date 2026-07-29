@@ -88,3 +88,19 @@ tools:
           items: {type: string}
           description: "Concrete source URLs to classify; preserve the user-supplied URLs."
       required: [urls]
+
+  - name: source_compare
+    description: "Compare multiple source URLs side-by-side for credibility, bias, or coverage differences. Use when the user asks to compare sources, check differences between URLs, or evaluate which source is more reliable. Pass all URLs to compare in the urls array."
+    parameters:
+      type: object
+      properties:
+        urls:
+          type: array
+          minItems: 2
+          items: {type: string}
+          description: "Multiple source URLs to compare"
+        criteria:
+          type: string
+          default: "general"
+          description: "Comparison criteria: general, credibility, bias, coverage"
+      required: [urls]
