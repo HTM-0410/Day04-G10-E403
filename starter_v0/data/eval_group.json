@@ -1,7 +1,7 @@
 {
-  "dataset_id": "day04_v2_truongminhhoang_group",
+  "dataset_id": "day04_v3_truongminhhoang_group",
   "dataset_role": "group",
-  "description": "Ten original team-authored cases: five single-turn and five multi-turn cases covering source triage, routing, arguments, missing information, action boundaries, and no-tool behavior.",
+  "description": "Ten original team-authored cases: five single-turn and five multi-turn cases covering four team-built research tools, routing, arguments, action boundaries, and no-tool behavior.",
   "allowed_failure_types": [
     "wrong_tool",
     "wrong_arg_value",
@@ -34,47 +34,96 @@
       }
     },
     {
-      "id": "G02_single_web_news_args",
+      "id": "G02_single_source_deduplicate",
       "phase": "B",
-      "query": "Tìm web news cho đúng từ khóa cybersecurity trong tuần này.",
+      "query": "Chuẩn hóa và loại URL trùng trong đúng danh sách này: https://www.example.com/report?utm_source=demo, https://example.com/report#summary, https://example.org/data",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "source_deduplicate",
+            "args": {
+              "urls": [
+                "https://www.example.com/report?utm_source=demo",
+                "https://example.com/report#summary",
+                "https://example.org/data"
+              ]
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Routes an explicit URL cleanup request to source_deduplicate while preserving every supplied URL."
+      }
+    },
+    {
+      "id": "G03_single_freshness_check",
+      "phase": "B",
+      "query": "Kiểm tra độ mới của hai nguồn theo mốc 2026-07-29 và ngưỡng 90 ngày. Giữ nguyên dữ liệu: Recent report ngày 2026-07-01; Old report ngày 2024-01-01.",
       "failure_type": "wrong_arg_value",
       "expect": {
         "tool_calls": [
           {
-            "name": "lookup",
+            "name": "freshness_check",
             "args": {
-              "query": "cybersecurity",
-              "topic": "news",
-              "timeframe": "week"
+              "items": [
+                {
+                  "title": "Recent report",
+                  "date": "2026-07-01"
+                },
+                {
+                  "title": "Old report",
+                  "date": "2024-01-01"
+                }
+              ],
+              "as_of": "2026-07-29",
+              "max_age_days": 90
             }
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "Maps an explicit web-news keyword and weekly timeframe without adding social search."
+        "what_it_tests": "Routes a dated-source freshness audit and preserves the reference date and age threshold."
       }
     },
     {
-      "id": "G03_single_missing_url",
+      "id": "G04_single_claim_coverage",
       "phase": "B",
-      "query": "Đọc bài viết này rồi tóm tắt giúp mình.",
-      "failure_type": "missing_info",
+      "query": "Kiểm tra coverage cho các claim và evidence sau, không tự tìm thêm nguồn. Claims: C1 = \"Agent đạt 100% base eval\"; C2 = \"Không có provider error\". Evidence: https://example.com/run.json hỗ trợ claim_ids [C1].",
+      "failure_type": "wrong_arg_value",
       "expect": {
         "tool_calls": [
           {
-            "name": "clarify",
+            "name": "claim_coverage",
             "args": {
-              "response_type": "text"
+              "claims": [
+                {
+                  "id": "C1",
+                  "text": "Agent đạt 100% base eval"
+                },
+                {
+                  "id": "C2",
+                  "text": "Không có provider error"
+                }
+              ],
+              "evidence": [
+                {
+                  "url": "https://example.com/run.json",
+                  "claim_ids": [
+                    "C1"
+                  ]
+                }
+              ]
             }
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "Asks for a missing URL instead of inventing one or calling fetch."
+        "what_it_tests": "Routes explicit claim-to-evidence gap analysis without searching, fetching, or inventing evidence."
       }
     },
     {
-      "id": "G04_single_no_tool_greeting",
+      "id": "G05_single_no_tool_greeting",
       "phase": "B",
       "query": "Viết một lời chào ngắn bằng tiếng Việt.",
       "failure_type": "unnecessary_tool",
@@ -83,27 +132,6 @@
       },
       "metadata": {
         "what_it_tests": "Avoids research tools for a simple writing request outside tool capabilities."
-      }
-    },
-    {
-      "id": "G05_single_top_social",
-      "phase": "B",
-      "query": "Tìm đúng 3 bài Top trên Twitter về AI agents.",
-      "failure_type": "wrong_arg_value",
-      "expect": {
-        "tool_calls": [
-          {
-            "name": "social_search",
-            "args": {
-              "query": "AI agents",
-              "search_type": "Top",
-              "limit": 3
-            }
-          }
-        ]
-      },
-      "metadata": {
-        "what_it_tests": "Routes explicit Twitter topic search and preserves Top plus limit arguments."
       }
     },
     {
@@ -138,7 +166,7 @@
         ]
       },
       "metadata": {
-        "what_it_tests": "Carries two concrete URLs across turns into the new tool without fetching them."
+        "what_it_tests": "Carries two concrete URLs across turns into source_triage without fetching them."
       }
     },
     {
@@ -238,7 +266,7 @@
         ]
       },
       "metadata": {
-        "what_it_tests": "Carries web-news intent and timeframe while replacing topic and setting a new result limit."
+        "what_it_tests": "Carries web-news intent and timeframe while replacing the topic and setting a new result limit."
       }
     },
     {

@@ -78,7 +78,7 @@ tools:
       required: [items, template]
 
   - name: source_triage
-    description: "Classify concrete source URLs into research-evidence Tier 1, 2, or 3. Put ALL supplied URLs into one urls array and call this tool exactly once. Twitter/X/Reddit URLs are inputs to classify, not requests to call timeline or social_search. Use only for source assessment/triage; this tool does not fetch pages or verify claims. If URLs are missing, use clarify instead."
+    description: "Classify concrete source URLs into research-evidence Tier 1, 2, or 3. Put ALL supplied URLs into one urls array and call this tool exactly once; NEVER split one URL list across multiple calls. Twitter/X/Reddit URLs are inputs to classify, not requests to call timeline or social_search. Use only for source assessment/triage; this tool does not fetch pages or verify claims. If URLs are missing, use clarify instead."
     parameters:
       type: object
       properties:
@@ -88,3 +88,59 @@ tools:
           items: {type: string}
           description: "Concrete source URLs to classify; preserve the user-supplied URLs."
       required: [urls]
+
+  - name: source_deduplicate
+    description: "Normalize and deduplicate a concrete URL list already supplied by the user. Use only for an explicit request to deduplicate, clean, normalize, or consolidate URLs. Put ALL URLs into one urls array and call exactly once. This tool does not fetch pages, assess credibility, or verify claims; if URLs are missing, use clarify."
+    parameters:
+      type: object
+      properties:
+        urls:
+          type: array
+          minItems: 1
+          items: {type: string}
+          description: "All concrete URLs to normalize and deduplicate."
+      required: [urls]
+
+  - name: freshness_check
+    description: "Audit the freshness or staleness of items whose dates the user already supplied. Use only for explicit freshness, recency, or staleness checks. Preserve ISO YYYY-MM-DD dates, the explicit as_of reference date, and max_age_days threshold. This tool does not search for missing dates or fetch pages."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              date: {type: string, description: "Known publication or update date in ISO YYYY-MM-DD format."}
+            required: [title, date]
+        as_of: {type: string, description: "Reference date in ISO YYYY-MM-DD format. Omit only when the user did not specify one."}
+        max_age_days: {type: integer, minimum: 0, default: 365, description: "Maximum age in days that still counts as fresh."}
+      required: [items]
+
+  - name: claim_coverage
+    description: "Audit which explicitly supplied claims have at least one supplied evidence URL. Use only when the user provides both claims and evidence-to-claim mappings and asks for coverage, unsupported claims, or evidence gaps. Preserve claim IDs, text, URLs, and claim_ids. This tool does not fetch sources, assess credibility, or verify truth."
+    parameters:
+      type: object
+      properties:
+        claims:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              id: {type: string}
+              text: {type: string}
+            required: [id, text]
+        evidence:
+          type: array
+          items:
+            type: object
+            properties:
+              url: {type: string}
+              claim_ids:
+                type: array
+                items: {type: string}
+            required: [url, claim_ids]
+      required: [claims, evidence]

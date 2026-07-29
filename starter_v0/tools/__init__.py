@@ -16,6 +16,9 @@ from .format.tool import render_digest
 from .policy.tool import search_company_policy
 from .social_search.tool import search_tweets
 from .send.tool import send_telegram
+from .claim_coverage.tool import audit_claim_coverage
+from .freshness_check.tool import check_freshness
+from .source_deduplicate.tool import deduplicate_sources
 from .source_triage.tool import triage_sources
 from .lookup.tool import web_search
 
@@ -33,6 +36,9 @@ TOOL_FUNCTIONS = {
     "fetch": read_url,
     "format": render_digest,
     "send": send_telegram,
+    "claim_coverage": audit_claim_coverage,
+    "freshness_check": check_freshness,
+    "source_deduplicate": deduplicate_sources,
     "source_triage": triage_sources,
     "policy": search_company_policy,
     "papers": arxiv_search,

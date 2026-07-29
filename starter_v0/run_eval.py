@@ -101,7 +101,16 @@ def normalize_value(value: Any) -> Any:
     if isinstance(value, str):
         return value.strip().lower()
     if isinstance(value, list):
-        return sorted(normalize_value(item) for item in value)
+        normalized_items = [normalize_value(item) for item in value]
+        return sorted(
+            normalized_items,
+            key=lambda item: json.dumps(item, sort_keys=True, ensure_ascii=False, default=str),
+        )
+    if isinstance(value, dict):
+        return {
+            key: normalize_value(item)
+            for key, item in sorted(value.items())
+        }
     return value
 
 
@@ -355,7 +364,7 @@ def main() -> None:
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     print_table(results, summary)
     print(f"\nArtifact version: {artifact_version.artifact_version}")
-    print(f"\nSaved: {out_path}")
+    print(f"\nSaved: {out_path.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
