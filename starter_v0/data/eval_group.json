@@ -1,7 +1,270 @@
 {
-  "dataset_id": "day04_v2_research_group",
+  "dataset_id": "day04_v2_truongminhhoang_group",
   "dataset_role": "group",
-  "description": "Template để NHÓM tự viết đúng 10 case: 5 single-turn dùng query và 5 multi-turn dùng turns. Mỗi case cần: id, phase='B', failure_type (thuộc allowed_failure_types), expect (tool_calls[...] hoặc no_tool=true), và metadata.what_it_tests. File để trống có chủ đích vì mỗi nhóm phải tự thiết kế các case này.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "description": "Ten original team-authored cases: five single-turn and five multi-turn cases covering source triage, routing, arguments, missing information, action boundaries, and no-tool behavior.",
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
+  "cases": [
+    {
+      "id": "G01_single_source_triage",
+      "phase": "B",
+      "query": "Phân loại độ tin cậy của hai nguồn này: https://www.who.int/news và https://x.com/example/status/1",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "source_triage",
+            "args": {
+              "urls": [
+                "https://www.who.int/news",
+                "https://x.com/example/status/1"
+              ]
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Routes an explicit credibility-triage request with concrete URLs to the new source_triage tool."
+      }
+    },
+    {
+      "id": "G02_single_web_news_args",
+      "phase": "B",
+      "query": "Tìm web news cho đúng từ khóa cybersecurity trong tuần này.",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "cybersecurity",
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Maps an explicit web-news keyword and weekly timeframe without adding social search."
+      }
+    },
+    {
+      "id": "G03_single_missing_url",
+      "phase": "B",
+      "query": "Đọc bài viết này rồi tóm tắt giúp mình.",
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Asks for a missing URL instead of inventing one or calling fetch."
+      }
+    },
+    {
+      "id": "G04_single_no_tool_greeting",
+      "phase": "B",
+      "query": "Viết một lời chào ngắn bằng tiếng Việt.",
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "no_tool": true
+      },
+      "metadata": {
+        "what_it_tests": "Avoids research tools for a simple writing request outside tool capabilities."
+      }
+    },
+    {
+      "id": "G05_single_top_social",
+      "phase": "B",
+      "query": "Tìm đúng 3 bài Top trên Twitter về AI agents.",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "AI agents",
+              "search_type": "Top",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Routes explicit Twitter topic search and preserves Top plus limit arguments."
+      }
+    },
+    {
+      "id": "G06_multi_triage_carryover",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Mình đang xem https://arxiv.org/abs/1706.03762."
+        },
+        {
+          "role": "user",
+          "content": "Nguồn còn lại là https://reddit.com/r/MachineLearning."
+        },
+        {
+          "role": "user",
+          "content": "Dùng source triage đánh giá đúng hai URL vừa nêu."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "source_triage",
+            "args": {
+              "urls": [
+                "https://arxiv.org/abs/1706.03762",
+                "https://reddit.com/r/MachineLearning"
+              ]
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Carries two concrete URLs across turns into the new tool without fetching them."
+      }
+    },
+    {
+      "id": "G07_multi_correct_account",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Cho mình tweet mới của Sam Altman."
+        },
+        {
+          "role": "user",
+          "content": "Đổi sang Andrej Karpathy nhé."
+        },
+        {
+          "role": "user",
+          "content": "Lấy đúng 2 bài gần nhất."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "karpathy",
+              "limit": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Applies account correction and latest-turn result limit across three turns."
+      }
+    },
+    {
+      "id": "G08_multi_send_boundary",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Soạn nháp: Báo cáo AI tuần này đã sẵn sàng."
+        },
+        {
+          "role": "assistant",
+          "content": "Đã ghi nhận nội dung bản nháp."
+        },
+        {
+          "role": "user",
+          "content": "Gửi bản nháp đó lên Telegram."
+        }
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Requires explicit yes/no confirmation before an external Telegram send."
+      }
+    },
+    {
+      "id": "G09_multi_web_carryover",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm web news về climate tech trong tháng này."
+        },
+        {
+          "role": "user",
+          "content": "Đổi chủ đề thành batteries."
+        },
+        {
+          "role": "user",
+          "content": "Giữ web news tháng này và chỉ lấy 4 kết quả."
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "batteries",
+              "topic": "news",
+              "timeframe": "month",
+              "max_results": 4
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "what_it_tests": "Carries web-news intent and timeframe while replacing topic and setting a new result limit."
+      }
+    },
+    {
+      "id": "G10_multi_cancel_no_tool",
+      "phase": "B",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm tin AI mới nhất giúp mình."
+        },
+        {
+          "role": "user",
+          "content": "Khoan, chưa cần tìm nữa."
+        },
+        {
+          "role": "user",
+          "content": "Chỉ trả lời rằng yêu cầu đã được hủy."
+        }
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "no_tool": true
+      },
+      "metadata": {
+        "what_it_tests": "Honors cancellation and avoids executing the earlier research request."
+      }
+    }
+  ]
 }
